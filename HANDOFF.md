@@ -11,6 +11,7 @@ Infraestrutura operacional da `Eleva Local` na VPS Hostinger. Este repo cobre st
 - snapshot remoto `e77cf8f6` existe e foi restaurado com sucesso
 - chave B2 exposta durante a operacao foi rotacionada e validada
 - runtime dedicado do `n8n` para o tenant interno `cli-eleva-pilot` foi preparado no repositorio, mas ainda nao foi deployado
+- tentativa de deploy do runtime dedicado sem `.env` real falhou antes de criar container; nao houve impacto no shared
 - o stack shared `n8n-mamtm8g3b2mdh7ko0hxdcyr3` nao deve ser alterado na fase de preparacao do dedicated
 
 ## O que ja foi provado
@@ -27,14 +28,15 @@ Infraestrutura operacional da `Eleva Local` na VPS Hostinger. Este repo cobre st
 1. confirmar Healthchecks diario no painel
 2. criar/configurar Healthchecks semanal para `ops/restic-check.sh`
 3. abrir PR da branch `codex/n8n-dedicated-success-checklist`, se ainda nao foi aberta
-4. executar deploy controlado de `tenants/runtime/cli-eleva-pilot` na VPS
-5. validar:
+4. na VPS, gerar `.env` real com `python3 ops/provision-n8n-dedicated.py --tenant-id cli-eleva-pilot --domain wf-pilot.elevalocal.shop --force`
+5. executar deploy controlado de `tenants/runtime/cli-eleva-pilot` com `docker compose --env-file .env up -d`
+6. validar:
    - `curl -I https://wf-pilot.elevalocal.shop`
    - login owner
    - importacao manual de ao menos 1 workflow
    - `ops/smoke-test-tenant.sh`
    - shared `n8n-mamtm8g3b2mdh7ko0hxdcyr3` ainda no ar
-6. apos migracao real, atualizar `tenants/manifests/cli-eleva-pilot.yaml` para `dedicated` em commit separado
+7. apos migracao real, atualizar `tenants/manifests/cli-eleva-pilot.yaml` para `dedicated` em commit separado
 
 ## Observacoes operacionais
 

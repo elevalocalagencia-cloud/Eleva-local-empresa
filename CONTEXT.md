@@ -20,6 +20,8 @@
   - `docs/N8N-DEDICATED-RUNBOOK.md`
   - `MIGRATION-PILOT.md`
 - branch `codex/n8n-dedicated-success-checklist` foi criada para marcar checklist de criterio de sucesso comprovado
+- na VPS, `git pull origin main` trouxe o runtime dedicado para `/root/elevalocal-infra`
+- tentativa de `docker compose up -d` em `tenants/runtime/cli-eleva-pilot` falhou antes de subir containers porque `.env` real nao existia no runtime e as variaveis ficaram vazias
 
 ## Validacoes executadas
 
@@ -34,6 +36,7 @@
 - `docker compose --env-file tenants/runtime/cli-eleva-pilot/.env -f tenants/runtime/cli-eleva-pilot/docker-compose.yml config --quiet` -> ok
 - `python ops/validate-tenant-manifest.py tenants/manifests/cli-eleva-pilot.yaml --registry tenants/registry.yaml` -> valido
 - `pytest ops/tests -q` -> `13 passed`
+- VPS: `docker compose up -d` sem `.env` real -> falhou com variaveis `N8N_IMAGE`, `POSTGRES_IMAGE`, `REDIS_IMAGE` vazias; `docker ps | grep pilot` nao retornou container
 
 ## Riscos ainda abertos
 
@@ -41,5 +44,6 @@
 - ainda falta criar ou configurar um segundo check semanal para `ops/restic-check.sh`
 - `wf-pilot.elevalocal.shop` ainda nao foi deployado nem validado com certificado
 - login owner, importacao de workflow e smoke 100% no `n8n` dedicado ainda nao foram executados
+- antes do deploy dedicated na VPS, gerar `.env` real com `python3 ops/provision-n8n-dedicated.py --tenant-id cli-eleva-pilot --domain wf-pilot.elevalocal.shop --force`
 - `tenants/manifests/cli-eleva-pilot.yaml` ainda deve permanecer `shared-foundation` ate a migracao real ser executada
 - PR nao foi aberto automaticamente porque `gh` nao esta instalado e nao havia `GH_TOKEN/GITHUB_TOKEN`; a branch foi pushada e a tela de PR foi aberta
