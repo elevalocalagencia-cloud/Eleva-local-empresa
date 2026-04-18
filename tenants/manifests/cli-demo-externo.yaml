@@ -1,6 +1,6 @@
 tenant:
   tenant_id: cli-demo-externo
-  status: onboarding
+  status: demo
   company_name: Cliente Externo Demo LTDA
   slug: demo-externo
   owner:
@@ -9,7 +9,7 @@ tenant:
     email: ops-demo@elevalocal.shop
     phone: '+5511976543210'
   contract:
-    plan: piloto-externo
+    plan: demo-publica
     billing_cycle: mensal
     start_date: null
     notes: >-
@@ -27,12 +27,12 @@ channels:
     number_e164: '+5511976543210'
     display_name: Cliente Externo Demo LTDA
     evolution_instance: cli-demo-externo-evo
-    status: pending
+    status: disabled-demo
   chatwoot:
     account_name: Eleva Local
     inbox_name: cli-demo-externo-inbox
     inbox_id: null
-    status: pending
+    status: disabled-demo
 automation:
   n8n:
     mode: dedicated
@@ -84,7 +84,7 @@ provisioning:
     - executar smoke test e registrar rollback path no checklist
 infrastructure:
   domains:
-    customer_facing: demo-externo.elevalocal.shop
+    customer_facing: wf-demo.elevalocal.shop
     internal_webhook: webhook.elevalocal.shop
   integrations:
     evolution_api: api.elevalocal.shop
@@ -105,4 +105,5 @@ security:
   shared_credentials_allowed: false
   lgpd_notes: >-
     Tenant de simulacao sem dados de cliente final. Usar apenas para validar
-    onboarding, naming, checklist e gates de provisionamento externo.
+    onboarding, naming, checklist e gates de provisionamento externo. Nao
+    conectar WhatsApp real nem inbox real de cliente pagante neste tenant.

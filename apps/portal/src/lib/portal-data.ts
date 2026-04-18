@@ -1,6 +1,7 @@
 import "server-only";
 
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { applyDemoTenantOverrides, getDemoBookings, getDemoDashboardMetrics, isDemoTenant } from "@/lib/demo-data";
 import { resolveCurrentTenantAccess } from "@/lib/auth/server-tenant";
 
 export type PortalTenant = {
@@ -67,7 +68,7 @@ export function tenantIdToSlug(tenantId: string): string {
 export function buildPortalTenant(tenantId: string, userEmail?: string | null): PortalTenant {
   const slug = tenantIdToSlug(tenantId);
 
-  return {
+  return applyDemoTenantOverrides({
     id: tenantId,
     name: humanizeTenantName(tenantId),
     slug,
@@ -78,7 +79,7 @@ export function buildPortalTenant(tenantId: string, userEmail?: string | null): 
     chatwootInboxName: `${tenantId}-inbox`,
     evolutionInstance: `${tenantId}-evo`,
     subscriptionStatus: "Pendente",
-  };
+  });
 }
 
 export async function getPortalContext(): Promise<PortalContext | null> {
@@ -96,6 +97,10 @@ export async function getPortalContext(): Promise<PortalContext | null> {
 }
 
 export async function getDashboardMetrics(tenantId: string): Promise<DashboardMetrics> {
+  if (isDemoTenant(tenantId)) {
+    return getDemoDashboardMetrics();
+  }
+
   const supabase = await createSupabaseServerClient();
 
   if (!supabase) {
@@ -123,6 +128,10 @@ export async function getDashboardMetrics(tenantId: string): Promise<DashboardMe
 }
 
 export async function getBookings(tenantId: string): Promise<Booking[]> {
+  if (isDemoTenant(tenantId)) {
+    return getDemoBookings();
+  }
+
   const supabase = await createSupabaseServerClient();
 
   if (!supabase) {

@@ -22,18 +22,21 @@ Prioridade e status canonicos:
 
 1. validar offsite backup
 2. rotacionar segredos expostos
-3. congelar versao do `Chatwoot`
-4. executar primeiro provisionamento real de cliente externo
-5. reavaliar auditoria de lancamento
+3. executar primeiro provisionamento real de cliente externo
+4. fechar P1 comercial: monitoramento por tenant
+5. fechar P1 comercial: rotacao recorrente por tenant
 
-## Painel P0
+## Painel operacional
 
 | Frente | Status de execucao | Dependencia anterior | Artefato principal | Evidencia minima para fechar |
 | --- | --- | --- | --- | --- |
 | Offsite backup | `OPEN` | nenhuma | [OFFSITE-VALIDATION-CHECKLIST.md](C:/Users/PEDROSO/Downloads/elevalocal-infra/OFFSITE-VALIDATION-CHECKLIST.md) | destino remoto validado com SQLs e tarballs |
 | Rotacao de segredos | `OPEN` | offsite preferencialmente validado | [SECRET-ROTATION-CHECKLIST.md](C:/Users/PEDROSO/Downloads/elevalocal-infra/SECRET-ROTATION-CHECKLIST.md) | credenciais antigas invalidadas e owners registrados |
-| Freeze do `Chatwoot` | `OPEN` | backup novo e rollback claro | [CHATWOOT-VERSION-FREEZE.md](C:/Users/PEDROSO/Downloads/elevalocal-infra/CHATWOOT-VERSION-FREEZE.md) | stack fora de `latest` com smoke test executado |
-| Primeiro provisionamento externo | `OPEN` | segredos e stack base confiaveis | [FIRST-EXTERNAL-PROVISIONING.md](C:/Users/PEDROSO/Downloads/elevalocal-infra/FIRST-EXTERNAL-PROVISIONING.md) | cliente real provisionado com smoke test ponta a ponta |
+| Freeze do `Chatwoot` | `DONE` | backup novo e rollback claro | [CHATWOOT-VERSION-FREEZE.md](C:/Users/PEDROSO/Downloads/elevalocal-infra/CHATWOOT-VERSION-FREEZE.md) | stack fora de `latest` com smoke test executado |
+| Primeiro provisionamento externo real | `READY-PENDING-CLIENT` | segredos e stack base confiaveis | [FIRST-EXTERNAL-PROVISIONING.md](C:/Users/PEDROSO/Downloads/elevalocal-infra/FIRST-EXTERNAL-PROVISIONING.md) | cliente real provisionado com smoke test ponta a ponta |
+| RPO/RTO por stack | `DONE-TARGETS` | base de backup e restore definida | [docs/RPO-RTO.md](C:/Users/PEDROSO/Downloads/elevalocal-infra/docs/RPO-RTO.md) | targets internos publicados por stack |
+| Restore drill trimestral | `DONE-PLAYBOOK` | RPO/RTO definidos | [docs/RESTORE-DRILL-PLAYBOOK.md](C:/Users/PEDROSO/Downloads/elevalocal-infra/docs/RESTORE-DRILL-PLAYBOOK.md) | cadencia formalizada e evidencia inaugural registrada |
+| Demo publica | `PARTIAL` | runtime demo preparado no repo | [tenants/evidence/cli-demo-externo/setup-2026-04-18.md](C:/Users/PEDROSO/Downloads/elevalocal-infra/tenants/evidence/cli-demo-externo/setup-2026-04-18.md) | DNS resolvendo, deploy VPS validado e smoke `200/302` |
 
 ## Gates de passagem
 
@@ -48,14 +51,14 @@ Prioridade e status canonicos:
 
 - [ ] offsite validado
 - [ ] segredos rotacionados
-- [ ] `Chatwoot` fora de `latest`
+- [x] `Chatwoot` fora de `latest`
 - [ ] primeiro provisionamento real validado
 
 ### Gate 3. Antes de chamar `GO COMERCIAL`
 
-- [ ] RPO/RTO documentados
+- [x] RPO/RTO documentados
 - [ ] monitoramento e alertas basicos por tenant
-- [ ] rotina trimestral de restore drill registrada
+- [x] rotina trimestral de restore drill registrada
 - [ ] processo recorrente de rotacao por tenant formalizado
 
 ## Evidencia consolidada
@@ -76,10 +79,10 @@ Prioridade e status canonicos:
 
 ### Freeze do `Chatwoot`
 
-- owner:
-- versao congelada:
-- data:
-- observacoes:
+- owner: `eleva-local-ops`
+- versao congelada: `chatwoot/chatwoot:v4.12.0`
+- data: `2026-04-18`
+- observacoes: backup local pre-freeze e rollback registrados; validacao manual de login/mensagem ainda nao anexada
 
 ### Primeiro provisionamento externo
 
@@ -87,6 +90,21 @@ Prioridade e status canonicos:
 - owner:
 - data:
 - resultado:
+
+### Demo publica
+
+- tenant: `cli-demo-externo`
+- dominio-alvo: `wf-demo.elevalocal.shop`
+- evidencias no repo: setup, smoke inicial sem DNS e inventario de seed workflows
+- bloqueios: DNS ainda `NXDOMAIN`, deploy VPS nao executado nesta sessao, cron e Healthchecks ainda nao instalados
+
+## Proximo passo concreto
+
+1. criar o `A record` de `wf-demo.elevalocal.shop` para `2.24.199.157`
+2. aguardar propagacao e validar com `nslookup`
+3. na VPS, gerar `.env` real do demo e subir `tenants/runtime/cli-demo-externo`
+4. importar seed workflows, criar `demo@elevalocal.shop` e instalar cron do reset semanal
+5. registrar curl, screenshot e resposta de `/healthz` em `tenants/evidence/cli-demo-externo/`
 
 ## Regra de atualizacao
 

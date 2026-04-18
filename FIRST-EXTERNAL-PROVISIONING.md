@@ -12,6 +12,7 @@ comercial valido.
 
 - stack tecnica pronta para provisionamento controlado
 - tenant de simulacao validado: `cli-demo-externo`
+- demo publica planejada em `wf-demo.elevalocal.shop` para apresentar o resultado final a prospects
 - portal sem hardcode do tenant piloto
 - evidencias por tenant padronizadas em
   [tenants/evidence/TEMPLATE-evidence.md](C:/Users/PEDROSO/Downloads/elevalocal-infra/tenants/evidence/TEMPLATE-evidence.md)
@@ -46,6 +47,7 @@ Sem estes insumos, o gate nao pode ser executado de ponta a ponta:
    [tenants/evidence/TEMPLATE-evidence.md](C:/Users/PEDROSO/Downloads/elevalocal-infra/tenants/evidence/TEMPLATE-evidence.md)
 7. registrar assinados fora do repo publico conforme
    [legal/signed/README.md](C:/Users/PEDROSO/Downloads/elevalocal-infra/legal/signed/README.md)
+8. usar a demo publica em `wf-demo.elevalocal.shop` com prospect antes de provisionar tenant real, quando a demo estiver ativa
 
 ## Sequencia executiva
 

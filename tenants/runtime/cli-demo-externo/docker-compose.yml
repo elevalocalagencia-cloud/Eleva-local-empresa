@@ -22,26 +22,33 @@ services:
       N8N_PROTOCOL: https
       N8N_PROXY_HOPS: "1"
       N8N_SECURE_COOKIE: "true"
+      N8N_UI_BANNER: ${N8N_UI_BANNER}
       N8N_USER_MANAGEMENT_JWT_SECRET: ${N8N_USER_MANAGEMENT_JWT_SECRET}
       QUEUE_BULL_REDIS_HOST: cli-demo-externo-redis
       QUEUE_BULL_REDIS_PORT: "6379"
       WEBHOOK_URL: https://${N8N_DOMAIN}
     volumes:
       - n8n-data:/home/node/.n8n
+      - ./seed-workflows:/seed-workflows:ro
     networks:
       - internal
       - traefik
     labels:
       - traefik.enable=true
-      - traefik.http.routers.n8n-demo-externo-http.rule=Host(`wf-demo-externo.elevalocal.shop`)
-      - traefik.http.routers.n8n-demo-externo-http.entrypoints=http
-      - traefik.http.routers.n8n-demo-externo-http.middlewares=redirect-to-https
-      - traefik.http.routers.n8n-demo-externo.rule=Host(`wf-demo-externo.elevalocal.shop`)
-      - traefik.http.routers.n8n-demo-externo.entrypoints=https
-      - traefik.http.routers.n8n-demo-externo.tls=true
-      - traefik.http.routers.n8n-demo-externo.tls.certresolver=letsencrypt
-      - traefik.http.routers.n8n-demo-externo.service=n8n-demo-externo
-      - traefik.http.services.n8n-demo-externo.loadbalancer.server.port=5678
+      - traefik.http.routers.n8n-demo-http.rule=Host(`wf-demo.elevalocal.shop`)
+      - traefik.http.routers.n8n-demo-http.entrypoints=http
+      - traefik.http.routers.n8n-demo-http.middlewares=redirect-to-https
+      - traefik.http.routers.n8n-demo.rule=Host(`wf-demo.elevalocal.shop`)
+      - traefik.http.routers.n8n-demo.entrypoints=https
+      - traefik.http.routers.n8n-demo.tls=true
+      - traefik.http.routers.n8n-demo.tls.certresolver=letsencrypt
+      - traefik.http.routers.n8n-demo.middlewares=n8n-demo-headers,n8n-demo-ratelimit
+      - traefik.http.routers.n8n-demo.service=n8n-demo
+      - traefik.http.services.n8n-demo.loadbalancer.server.port=5678
+      - traefik.http.middlewares.n8n-demo-headers.headers.customresponseheaders.X-Eleva-Local-Demo=AMBIENTE DEMO - DADOS NAO PRESERVADOS
+      - traefik.http.middlewares.n8n-demo-headers.headers.customresponseheaders.X-Robots-Tag=noindex, nofollow
+      - traefik.http.middlewares.n8n-demo-ratelimit.ratelimit.average=100
+      - traefik.http.middlewares.n8n-demo-ratelimit.ratelimit.burst=50
       - traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https
 
   n8n-worker:

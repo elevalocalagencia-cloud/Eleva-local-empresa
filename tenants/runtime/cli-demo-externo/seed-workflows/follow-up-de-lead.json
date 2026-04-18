@@ -1,0 +1,79 @@
+{
+  "name": "Follow-up de lead (demo)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 6
+            }
+          ]
+        }
+      },
+      "id": "Schedule_1",
+      "name": "Cron demo",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        240,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ [\n  { \"lead\": \"Ana Demo\", \"canal\": \"Site\", \"status\": \"sem resposta\" },\n  { \"lead\": \"Bruno Demo\", \"canal\": \"Instagram\", \"status\": \"aguardando retorno\" }\n] }}"
+      },
+      "id": "Set_1",
+      "name": "Lista fake",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        520,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return $input.first().json.map((item, index) => ({ json: { lead: item.lead, canal: item.canal, mensagem: `Follow-up demo ${index + 1}: entrar em contato com ${item.lead} vindo de ${item.canal}.` } }));"
+      },
+      "id": "Code_1",
+      "name": "Formatar follow-up",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        800,
+        320
+      ]
+    }
+  ],
+  "connections": {
+    "Cron demo": {
+      "main": [
+        [
+          {
+            "node": "Lista fake",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lista fake": {
+      "main": [
+        [
+          {
+            "node": "Formatar follow-up",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {},
+  "versionId": "demo-followup-v1"
+}

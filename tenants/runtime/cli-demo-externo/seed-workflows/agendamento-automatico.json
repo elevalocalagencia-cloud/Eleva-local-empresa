@@ -1,0 +1,95 @@
+{
+  "name": "Agendamento automatico (demo)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "demo-agendamento",
+        "responseMode": "responseNode"
+      },
+      "id": "Webhook_1",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        240,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "lead-name",
+              "name": "lead_name",
+              "value": "={{ $json.body?.nome ?? 'Lead Demo' }}",
+              "type": "string"
+            },
+            {
+              "id": "slot",
+              "name": "slot",
+              "value": "2026-04-20 14:00",
+              "type": "string"
+            },
+            {
+              "id": "resposta",
+              "name": "resposta",
+              "value": "={{ 'Oi, ' + ($json.body?.nome ?? 'Lead Demo') + '. Seu horario demo ficou reservado para 2026-04-20 14:00.' }}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "id": "Set_1",
+      "name": "Preparar resposta",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        520,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { ok: true, fluxo: 'agendamento-demo', lead: $json.lead_name, slot: $json.slot, resposta: $json.resposta } }}"
+      },
+      "id": "Respond_1",
+      "name": "Responder webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        800,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Preparar resposta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar resposta": {
+      "main": [
+        [
+          {
+            "node": "Responder webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {},
+  "versionId": "demo-agendamento-v1"
+}

@@ -1,4 +1,5 @@
 import { MotionShell } from "@/components/portal/motion-shell";
+import { isDemoTenant } from "@/lib/demo-data";
 import { evolution } from "@/lib/evolution";
 import { getPortalContext } from "@/lib/portal-data";
 
@@ -10,7 +11,8 @@ export default async function SettingsPage() {
   }
 
   const { tenant } = context;
-  const status = await evolution.getInstanceStatus(tenant.evolutionInstance);
+  const demoMode = isDemoTenant(tenant.id);
+  const status = demoMode ? null : await evolution.getInstanceStatus(tenant.evolutionInstance);
 
   const rows = [
     ["Empresa", tenant.name],
@@ -20,7 +22,14 @@ export default async function SettingsPage() {
     ["Contato", tenant.ownerEmail],
     ["WhatsApp", tenant.whatsappNumber],
     ["Inbox", tenant.chatwootInboxName],
-    ["Evolution", status?.connected ? "Conectado" : "Aguardando conexao"],
+    [
+      "Integracoes",
+      demoMode
+        ? "WhatsApp e Chatwoot reais aparecem apenas no onboarding pago"
+        : status?.connected
+          ? "Evolution conectado"
+          : "Aguardando conexao",
+    ],
   ];
 
   return (

@@ -1,0 +1,155 @@
+{
+  "name": "FAQ WhatsApp (demo)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "demo-faq",
+        "responseMode": "responseNode"
+      },
+      "id": "Webhook_1",
+      "name": "Webhook FAQ",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        240,
+        280
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ ($json.body?.mensagem ?? '').toLowerCase() }}",
+              "operation": "contains",
+              "value2": "preco"
+            }
+          ]
+        }
+      },
+      "id": "If_1",
+      "name": "Perguntou preco?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        520,
+        280
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "reply-yes",
+              "name": "reply",
+              "value": "Temos planos demo a partir de R$ 290 por mes. Para integracao real, fale com a Eleva Local.",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "id": "Set_Yes",
+      "name": "Resposta preco",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        800,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "reply-no",
+              "name": "reply",
+              "value": "Posso te mostrar automacao de agendamento, follow-up e FAQ. Essa resposta e fake e roda so no ambiente demo.",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "id": "Set_No",
+      "name": "Resposta geral",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        800,
+        380
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { ok: true, fluxo: 'faq-demo', reply: $json.reply } }}"
+      },
+      "id": "Respond_1",
+      "name": "Responder FAQ",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1080,
+        280
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook FAQ": {
+      "main": [
+        [
+          {
+            "node": "Perguntou preco?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Perguntou preco?": {
+      "main": [
+        [
+          {
+            "node": "Resposta preco",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Resposta geral",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Resposta preco": {
+      "main": [
+        [
+          {
+            "node": "Responder FAQ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Resposta geral": {
+      "main": [
+        [
+          {
+            "node": "Responder FAQ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {},
+  "versionId": "demo-faq-v1"
+}
