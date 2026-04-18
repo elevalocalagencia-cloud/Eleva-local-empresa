@@ -25,3 +25,6 @@ export function canAccessTenant({
     (membership) => membership.userId === userId && membership.tenantId === tenantId,
   );
 }
+
+export const forbiddenMessage =
+  "Parece que você não tem acesso a essa área. Se achar que é engano, fala com seu gerente de conta.";

@@ -37,7 +37,7 @@ export class ChatwootClient {
     private readonly apiToken = env.chatwootApiToken,
   ) {}
 
-  async listConversations(): Promise<ChatwootConversation[]> {
+  async listConversations(options: { inboxId?: number } = {}): Promise<ChatwootConversation[]> {
     if (!this.baseUrl || !this.accountId || !this.apiToken) {
       return [];
     }
@@ -58,14 +58,18 @@ export class ChatwootClient {
     }
 
     const body = (await response.json()) as ChatwootConversationResponse;
-    return (body.data?.payload ?? []).map((conversation) => ({
-      id: conversation.id,
-      inboxId: conversation.inbox_id ?? null,
-      contactName: conversation.meta?.sender?.name ?? "Cliente",
-      lastMessage: conversation.messages?.at(-1)?.content ?? "Conversa sem mensagem recente",
-      status: conversation.status ?? "open",
-      updatedAt: conversation.updated_at ?? new Date().toISOString(),
-    }));
+    return (body.data?.payload ?? [])
+      .filter((conversation) =>
+        options.inboxId ? conversation.inbox_id === options.inboxId : true,
+      )
+      .map((conversation) => ({
+        id: conversation.id,
+        inboxId: conversation.inbox_id ?? null,
+        contactName: conversation.meta?.sender?.name ?? "Cliente",
+        lastMessage: conversation.messages?.at(-1)?.content ?? "Conversa sem mensagem recente",
+        status: conversation.status ?? "open",
+        updatedAt: conversation.updated_at ?? new Date().toISOString(),
+      }));
   }
 }
 

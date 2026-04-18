@@ -6,7 +6,7 @@ export default function DashboardPage() {
   const hasData = dashboardMetrics.conversations > 0;
 
   return (
-    <div className="enter-soft">
+    <div>
       <section className="mb-8">
         <p className="text-sm text-sky-100/70">Bem-vindo(a), Eleva Ops.</p>
         <h2 className="mt-2 max-w-4xl text-3xl font-semibold leading-tight text-white md:text-5xl">
@@ -42,7 +42,7 @@ export default function DashboardPage() {
         />
       </div>
 
-      <section className="mt-8 glass rounded-[20px] p-6">
+      <section className="defer-paint mt-8 glass rounded-[20px] p-6">
         <h3 className="text-lg font-medium text-white">Hoje</h3>
         <div className="mt-5">
           <EmptyState title="Ainda não recebemos mensagens hoje. Assim que chegar, aparece aqui. ☕" />

@@ -15,15 +15,20 @@ export async function sendMagicLink(formData: FormData) {
   const supabase = await createSupabaseServerClient();
 
   if (!supabase) {
-    redirect("/login?sent=1");
+    redirect("/login?error=config");
   }
 
-  await supabase.auth.signInWithOtp({
+  const { error } = await supabase.auth.signInWithOtp({
     email,
     options: {
       emailRedirectTo: `${env.appUrl}/auth/callback`,
     },
   });
+
+  if (error) {
+    console.error("magic_link_failed", error.message);
+    redirect("/login?error=send");
+  }
 
   redirect("/login?sent=1");
 }

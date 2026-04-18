@@ -1,16 +1,20 @@
-import { NextResponse, type NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 
+import { requireTenantAccess } from "@/lib/auth/server-tenant";
 import { evolution } from "@/lib/evolution";
+import { pilotTenant } from "@/lib/portal-data";
 
-export async function GET(request: NextRequest) {
-  const instance = request.nextUrl.searchParams.get("instance");
+export async function GET() {
+  const access = await requireTenantAccess(pilotTenant.id);
 
-  if (!instance) {
-    return NextResponse.json({ message: "Essa página não existe. Talvez tenha sido movida — volta pro início?" }, { status: 404 });
+  if (!access.allowed) {
+    return NextResponse.json({ message: access.message }, { status: access.status });
   }
 
   try {
-    return NextResponse.json({ status: await evolution.getInstanceStatus(instance) });
+    return NextResponse.json({
+      status: await evolution.getInstanceStatus(pilotTenant.evolutionInstance),
+    });
   } catch {
     return NextResponse.json(
       {

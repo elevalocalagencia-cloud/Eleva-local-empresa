@@ -11,6 +11,7 @@ export const env = {
   chatwootBaseUrl: optional("CHATWOOT_BASE_URL"),
   chatwootAccountId: optional("CHATWOOT_ACCOUNT_ID"),
   chatwootApiToken: optional("CHATWOOT_API_ACCESS_TOKEN"),
+  chatwootInboxId: optional("CHATWOOT_INBOX_ID"),
   evolutionBaseUrl: optional("EVOLUTION_BASE_URL"),
   evolutionApiKey: optional("EVOLUTION_API_KEY"),
 };
