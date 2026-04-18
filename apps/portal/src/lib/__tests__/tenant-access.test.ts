@@ -28,4 +28,14 @@ describe("tenant access", () => {
       }),
     ).toBe(false);
   });
+
+  it("blocks access when the user has no memberships at all", () => {
+    expect(
+      canAccessTenant({
+        userId: "user-a",
+        tenantId: "tenant-a",
+        memberships: [],
+      }),
+    ).toBe(false);
+  });
 });

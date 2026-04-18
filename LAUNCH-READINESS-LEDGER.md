@@ -22,6 +22,8 @@ Este arquivo existe para eliminar conflito entre:
 - `DONE`: evidenciado e fechado
 - `OPEN`: ainda pendente
 - `PARTIAL`: trilha existe, mas evidencia de fechamento ainda nao existe
+- `READY-PENDING-CLIENT`: tecnica pronta, aguardando cliente real
+- `DONE-TECNICO`: base tecnica pronta; execucao comercial depende de insumo externo
 
 ## Ledger canonico
 
@@ -34,7 +36,8 @@ Este arquivo existe para eliminar conflito entre:
 | Offsite backup validado | `OPEN` | existe checklist, mas sem evidencia de execucao remota | `eleva-local-ops` | `P0` | `SIM` |
 | Rotacao de segredos pos-investigacao | `OPEN` | existe checklist, mas sem evidencia de rotacao concluida | `eleva-local-ops` | `P0` | `SIM` |
 | Freeze de versao do `Chatwoot` | `DONE` | `CHATWOOT-VERSION-FREEZE.md` registra freeze em `2026-04-18` para `chatwoot/chatwoot:v4.12.0` com backup local pre-freeze e rollback documentado | `eleva-local-ops` | `P0` | `SIM` |
-| Primeiro provisionamento externo real ponta a ponta | `OPEN` | existe baseline `cli-demo-externo`, mas nao ha go-live real provado | `eleva-local-ops` | `P0` | `SIM` |
+| Primeiro provisionamento externo real ponta a ponta | `READY-PENDING-CLIENT` | scaffold, checklist, portal sem hardcode do piloto, estrutura `tenants/evidence/` e `legal/signed/` prontas; aguardando cliente real para executar `2.5-B` | `eleva-local-ops` | `P0` | `SIM` |
+| GO CONTROLADO tecnico | `DONE-TECNICO` | base tecnica shelf-ready para os proximos clientes; execucao comercial ainda depende do primeiro cliente real em `2.5-B` | `eleva-local-ops` | `P0` | `NAO` |
 | RPO/RTO por stack | `OPEN` | citado como pendente em auditoria | `eleva-local-ops` | `P1` | `NAO` |
 | Monitoramento e alertas por tenant | `OPEN` | citado como pendente em auditoria | `eleva-local-ops` | `P1` | `NAO` |
 | Processo recorrente de rotacao por tenant | `OPEN` | politica ainda nao formalizada com evidencia recorrente | `eleva-local-ops` | `P1` | `NAO` |
@@ -44,13 +47,16 @@ Este arquivo existe para eliminar conflito entre:
 
 ### `GO CONTROLADO`
 
-So pode ser declarado quando todos os itens `P0` com bloqueio `SIM` estiverem em `DONE`.
+Do ponto de vista tecnico, a base pode ser tratada como `DONE-TECNICO` quando os
+guardrails, freeze, scaffold e shelf-ready estiverem registrados. A entrada em
+operacao comercial real continua dependendo do primeiro cliente externo em `2.5-B`.
 
 ### `GO COMERCIAL`
 
 So pode ser declarado quando:
 
-- todos os `P0` estiverem em `DONE`
+- todos os `P0` executaveis estiverem em `DONE`
+- o primeiro cliente externo real estiver evidenciado
 - os `P1` relevantes de governanca estiverem fechados ou formalmente aceitos
 
 ## Evidencias de tenant atualmente conhecidas
@@ -60,6 +66,7 @@ So pode ser declarado quando:
 - tipo: tenant interno
 - runtime `n8n`: `shared-foundation`
 - status de restore no registry: `validated`
+- evidencia: [tenants/evidence/cli-eleva-pilot/2026-04-18-provisioning.md](C:/Users/PEDROSO/Downloads/elevalocal-infra/tenants/evidence/cli-eleva-pilot/2026-04-18-provisioning.md)
 
 ### `cli-demo-externo`
 

@@ -27,4 +27,4 @@ export function canAccessTenant({
 }
 
 export const forbiddenMessage =
-  "Parece que você não tem acesso a essa área. Se achar que é engano, fala com seu gerente de conta.";
+  "Parece que voce nao tem acesso a essa area. Se achar que e engano, fala com seu gerente de conta.";

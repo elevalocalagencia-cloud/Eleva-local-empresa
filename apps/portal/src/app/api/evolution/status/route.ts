@@ -1,11 +1,10 @@
 import { NextResponse } from "next/server";
 
-import { requireTenantAccess } from "@/lib/auth/server-tenant";
+import { resolveCurrentTenantAccess } from "@/lib/auth/server-tenant";
 import { evolution } from "@/lib/evolution";
-import { pilotTenant } from "@/lib/portal-data";
 
 export async function GET() {
-  const access = await requireTenantAccess(pilotTenant.id);
+  const access = await resolveCurrentTenantAccess();
 
   if (!access.allowed) {
     return NextResponse.json({ message: access.message }, { status: access.status });
@@ -13,13 +12,13 @@ export async function GET() {
 
   try {
     return NextResponse.json({
-      status: await evolution.getInstanceStatus(pilotTenant.evolutionInstance),
+      status: await evolution.getInstanceStatus(`${access.tenantId}-evo`),
     });
   } catch {
     return NextResponse.json(
       {
         message:
-          "Tivemos um contratempo aqui do nosso lado. Já fomos avisados e estamos resolvendo. Tenta de novo em 1 minuto?",
+          "Tivemos um contratempo aqui do nosso lado. Ja fomos avisados e estamos resolvendo. Tenta de novo em 1 minuto?",
       },
       { status: 500 },
     );

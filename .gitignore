@@ -22,4 +22,9 @@ dev-server*.log
 start-server*.log
 lighthouse-portal.report.html
 lighthouse-portal.report.json
+legal/signed/*.pdf
+legal/signed/*.docx
+legal/signed/*/
+!legal/signed/README.md
+!legal/signed/.gitkeep
 .DS_Store
