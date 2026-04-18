@@ -28,6 +28,7 @@
 - `www.webhook.elevalocal.shop`
 - `api.elevalocal.shop`
 - `www.api.elevalocal.shop`
+- `wf-demo.elevalocal.shop` (demo publica planejada)
 
 ## Servicos observados
 

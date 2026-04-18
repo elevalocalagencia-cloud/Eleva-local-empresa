@@ -90,26 +90,6 @@ Artefato de execucao:
 
 - [SECRET-ROTATION-CHECKLIST.md](C:/Users/PEDROSO/Downloads/elevalocal-infra/SECRET-ROTATION-CHECKLIST.md)
 
-### P0. `Chatwoot` ainda esta em `latest`
-
-Risco:
-
-- drift de comportamento e deploy nao deterministico
-
-Impacto:
-
-- alto
-
-Para remover o bloqueio:
-
-1. fixar tag explicita do `Chatwoot`
-2. registrar a versao congelada no runbook
-3. manter rollback claro para a mesma versao
-
-Artefato de execucao:
-
-- [CHATWOOT-VERSION-FREEZE.md](C:/Users/PEDROSO/Downloads/elevalocal-infra/CHATWOOT-VERSION-FREEZE.md)
-
 ### P0. Provisionamento real de cliente externo ainda nao foi executado ponta a ponta
 
 Risco:
@@ -133,11 +113,6 @@ Artefato de execucao:
 - [FIRST-EXTERNAL-PROVISIONING.md](C:/Users/PEDROSO/Downloads/elevalocal-infra/FIRST-EXTERNAL-PROVISIONING.md)
 
 ## Itens importantes, mas nao bloqueantes para piloto assistido
-
-### P1. RPO/RTO ainda nao estao formalizados por stack
-
-Sem isso, existe backup e restore drill, mas nao existe compromisso operacional
-explicito de perda maxima tolerada e tempo de recuperacao.
 
 ### P1. Monitoramento e alertas por tenant ainda nao existem
 
@@ -167,7 +142,7 @@ Todos abaixo devem estar `DONE` no ledger canonico:
 - [x] guardrail impedindo cliente externo em `n8n shared-foundation`
 - [ ] offsite backup validado
 - [ ] segredos rotacionados apos investigacao
-- [ ] `Chatwoot` com versao fixada
+- [x] `Chatwoot` com versao fixada
 - [ ] primeiro rollout real de cliente externo validado ponta a ponta
 
 Sem esses quatro ultimos, nao e seguro chamar a operacao de pronta para
@@ -178,9 +153,9 @@ lancamento comercial.
 Todos abaixo devem estar `SIM`:
 
 - [ ] todos os gates de `GO CONTROLADO`
-- [ ] RPO/RTO por stack documentados
+- [x] RPO/RTO por stack documentados
 - [ ] monitoramento e alertas basicos por tenant
-- [ ] rotina trimestral de restore drill registrada
+- [x] rotina trimestral de restore drill registrada
 - [ ] processo de rotacao de segredo por tenant registrado
 - [ ] versoes criticas congeladas em todos os stacks principais
 
@@ -202,9 +177,9 @@ Todos abaixo devem estar `SIM`:
 
 1. validar offsite backup
 2. rotacionar segredos expostos
-3. fixar versao explicita do `Chatwoot`
-4. executar primeiro provisionamento real ponta a ponta com `n8n dedicated`
-5. registrar smoke tests, owners, restore status e rollback path
+3. executar primeiro provisionamento real ponta a ponta com `n8n dedicated`
+4. registrar smoke tests, owners, restore status e rollback path
+5. fechar monitoramento e alertas por tenant
 6. reavaliar auditoria
 
 Execucao coordenada:

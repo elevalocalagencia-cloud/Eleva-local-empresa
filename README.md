@@ -92,8 +92,8 @@ Bloqueios atuais de launch:
 
 - offsite backup nao validado
 - rotacao de segredos pendente
-- `Chatwoot` ainda sem freeze explicito de versao
 - primeiro provisionamento externo real ainda nao provado ponta a ponta
+- monitoramento e alertas por tenant ainda nao formalizados
 
 ## Proxima fronteira
 
@@ -111,6 +111,23 @@ A proxima fase deste repositorio e a fundacao multi-cliente:
 2. revisar o manifest gerado em `tenants/manifests/`
 3. validar com `python ops/validate-tenant-manifest.py ...`
 4. registrar ownership, segredos e checklist antes de provisionar em producao
+
+## Demo publica
+
+URL alvo da vitrine tecnica:
+
+- `https://wf-demo.elevalocal.shop`
+
+Objetivo:
+
+- deixar prospects experimentarem o caminho real do `n8n dedicated` antes de contratar
+
+Guardrails:
+
+- ambiente demo, sem dado real
+- reset semanal
+- sem integracao `WhatsApp/Chatwoot` real
+- banner visivel de demo no portal
 
 ## Regra de ouro
 
