@@ -33,7 +33,7 @@ Este arquivo existe para eliminar conflito entre:
 | Guardrail multi-tenant no onboarding | `DONE` | manifests, registry e policy de `n8n dedicated` para cliente externo | `eleva-local-ops` | `P0` | `SIM` |
 | Offsite backup validado | `OPEN` | existe checklist, mas sem evidencia de execucao remota | `eleva-local-ops` | `P0` | `SIM` |
 | Rotacao de segredos pos-investigacao | `OPEN` | existe checklist, mas sem evidencia de rotacao concluida | `eleva-local-ops` | `P0` | `SIM` |
-| Freeze de versao do `Chatwoot` | `OPEN` | risco documentado; stack ainda referenciada em `latest` | `eleva-local-ops` | `P0` | `SIM` |
+| Freeze de versao do `Chatwoot` | `DONE` | `CHATWOOT-VERSION-FREEZE.md` registra freeze em `2026-04-18` para `chatwoot/chatwoot:v4.12.0` com backup local pre-freeze e rollback documentado | `eleva-local-ops` | `P0` | `SIM` |
 | Primeiro provisionamento externo real ponta a ponta | `OPEN` | existe baseline `cli-demo-externo`, mas nao ha go-live real provado | `eleva-local-ops` | `P0` | `SIM` |
 | RPO/RTO por stack | `OPEN` | citado como pendente em auditoria | `eleva-local-ops` | `P1` | `NAO` |
 | Monitoramento e alertas por tenant | `OPEN` | citado como pendente em auditoria | `eleva-local-ops` | `P1` | `NAO` |
