@@ -2,63 +2,55 @@
 
 ## Ponto em que parou
 
-O P0 de offsite backup foi fechado tecnicamente:
+O `n8n dedicated` do `cli-eleva-pilot` esta no ar em `https://wf-pilot.elevalocal.shop` e respondeu `HTTP 200` a partir do ambiente local.
 
-- `restic` instalado/atualizado na VPS
-- backup real enviado para Backblaze B2
-- snapshot `e77cf8f6` criado
-- `restic check` sem erros
-- restore controlado validado por comparacao sem diferencas
-- chave B2 exposta foi rotacionada e validada com `restic snapshots`
+Os dois bugs descobertos no deploy manual da VPS foram corrigidos no provisioner:
 
-Tambem foi preparada a prova de `n8n dedicated` para `cli-eleva-pilot`, sem deploy:
+- Redis deixou de ser `redis` generico e passou a ser namespaced por tenant
+- labels Traefik passaram para o padrao Coolify com HTTP redirect, `entrypoints=https`, `tls=true` e `router.service`
 
-- gerador `ops/provision-n8n-dedicated.py`
-- smoke script `ops/smoke-test-tenant.sh`
-- runtime versionado em `tenants/runtime/cli-eleva-pilot/`
-- runbook e plano de migracao
-- checklist de criterio marcado apenas no que foi comprovado
-- na VPS, o repo recebeu o commit de runtime dedicated via `git pull origin main`
-- uma tentativa de `docker compose up -d` sem `.env` real falhou de forma segura; nenhum container pilot ficou em execucao
+Commit pushado:
+
+- `392d660 fase2/0.1 provisioner n8n: fix redis collision + coolify labels`
 
 ## Proximo passo imediato
 
-1. confirmar Healthchecks diario no painel
-2. criar/configurar Healthcheck semanal para `ops/restic-check.sh`
-3. abrir PR da branch `codex/n8n-dedicated-success-checklist` se ainda nao foi aberta
-4. gerar `.env` real na VPS com `python3 ops/provision-n8n-dedicated.py --tenant-id cli-eleva-pilot --domain wf-pilot.elevalocal.shop --force`
-5. executar deploy controlado do runtime dedicado `cli-eleva-pilot` na VPS usando `docker compose --env-file .env up -d`
-6. validar dominio `wf-pilot.elevalocal.shop`, login owner, importacao manual de workflow e smoke test
+1. garantir PR da branch `codex/n8n-dedicated-success-checklist` contra `main`
+2. depois do merge, fazer `git pull origin main` na VPS em `/root/elevalocal-infra`
+3. iniciar Prompt 2.1 Observability
+4. registrar evidencia de login owner e importacao manual de 1 workflow no dedicated
+5. so depois de cutover/migracao real atualizar `tenants/manifests/cli-eleva-pilot.yaml` para `dedicated`
+
+## Comandos de retomada
+
+```bash
+git status --short --branch
+git log --oneline -5
+pytest ops/tests -q
+python ops/provision-n8n-dedicated.py --tenant-id cli-demo-externo --domain wf-demo-externo.elevalocal.shop --dry-run
+bash ops/smoke-test-tenant.sh --tenant-id cli-eleva-pilot --domain wf-pilot.elevalocal.shop
+```
+
+Na VPS, apos merge:
+
+```bash
+cd /root/elevalocal-infra
+git pull origin main
+```
 
 ## Arquivos de retomada
 
-- `CONTINUAMENTO-DA-SESSAO.md`
-- `CONTEXT.md`
-- `STATE.md`
-- `HANDOFF.md`
-- `MIGRATION-PILOT.md`
-- `docs/N8N-DEDICATED-RUNBOOK.md`
 - `ops/provision-n8n-dedicated.py`
-- `ops/smoke-test-tenant.sh`
+- `ops/tests/test_provision_n8n_dedicated.py`
 - `tenants/runtime/cli-eleva-pilot/docker-compose.yml`
-- `tenants/runtime/cli-eleva-pilot/.env.example`
+- `docs/N8N-DEDICATED-RUNBOOK.md`
+- `MIGRATION-PILOT.md`
 - `tenants/manifests/cli-eleva-pilot.yaml`
-
-## Verificacao mais recente
-
-- `pytest ops/tests -q` -> `13 passed`
-- `python ops/provision-n8n-dedicated.py --tenant-id cli-eleva-pilot --dry-run` -> ok
-- `docker compose --env-file tenants/runtime/cli-eleva-pilot/.env -f tenants/runtime/cli-eleva-pilot/docker-compose.yml config --quiet` -> ok
-- VPS: `restic snapshots` -> snapshot `e77cf8f6`
-- VPS: `ops/restic-check.sh` -> sem erros
-- VPS: restore `e77cf8f6` + `diff -qr` -> sem diferencas
-- VPS: tentativa de deploy dedicated sem `.env` real -> falhou antes de subir container
 
 ## Travas abertas
 
-- Healthchecks precisa de confirmacao visual no painel
-- check semanal de integridade ainda falta
-- PR pode precisar ser aberto manualmente porque `gh` nao esta disponivel neste ambiente
-- deploy real do `n8n` dedicado ainda nao foi feito
-- `.env` real de `tenants/runtime/cli-eleva-pilot` precisa ser gerado na VPS antes do deploy
-- manifest `cli-eleva-pilot` nao deve ser mudado para `dedicated` antes da migracao real
+- PR pode exigir abertura manual se GitHub CLI/token nao estiver disponivel
+- manifest do pilot ainda deve permanecer `shared-foundation` ate migracao/cutover real
+- webhook smoke retorna `404` ate importar workflow de smoke
+- Healthchecks semanal do `restic-check` ainda falta
+- Chatwoot freeze ainda pendente porque stack segue em `latest`

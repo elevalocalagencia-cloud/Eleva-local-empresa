@@ -2,7 +2,7 @@
 
 ## Fase atual
 
-Readiness de launch em execucao. Bloqueio P0 de offsite backup foi fechado tecnicamente; proxima frente e provar `n8n dedicated` do tenant piloto antes de qualquer cliente externo.
+Fase 2.0 concluida no codigo: provisioner do `n8n dedicated` corrigido apos os hotfixes manuais da VPS. A proxima frente e Prompt 2.1 Observability, depois de PR/merge da correcao ou decisao explicita de seguir na branch.
 
 Readiness de launch:
 
@@ -11,32 +11,30 @@ Readiness de launch:
 
 ## Status
 
-- offsite backup real em `restic` ativo na VPS
-- snapshot remoto `e77cf8f6` criado em Backblaze B2
-- integridade validada por `restic check`
-- restore controlado validado sem diferencas
-- chave B2 rotacionada e validada
-- runtime dedicado do `n8n` para `cli-eleva-pilot` preparado em codigo e documentacao
-- deploy/cutover do `n8n` dedicado ainda nao executado
-- tentativa de deploy sem `.env` real falhou de forma segura; nenhum container pilot subiu
-- `main` contem `125bab1 fase1/n8n-dedicated: prepare pilot runtime`
-- branch `codex/n8n-dedicated-success-checklist` contem `9b23bbc fase1/n8n-dedicated: mark success checklist`
+- offsite backup real em `restic` + Backblaze B2 segue validado
+- `n8n` dedicado do `cli-eleva-pilot` responde em `https://wf-pilot.elevalocal.shop`
+- smoke HTTP do tenant passou com health/login ok e webhook `404` esperado antes de importar workflow de smoke
+- provisioner corrigido para evitar colisao Redis na rede Coolify
+- provisioner corrigido para gerar labels Traefik compativeis com Coolify
+- dry-run de `cli-demo-externo` confirmou que novos tenants usam o mesmo padrao corrigido
+- branch atual: `codex/n8n-dedicated-success-checklist`
+- ultimo commit funcional pushado: `392d660 fase2/0.1 provisioner n8n: fix redis collision + coolify labels`
 
 ## Proximo passo concreto
 
-1. confirmar no painel Healthchecks se o check diario recebeu o ping do backup real
-2. criar/configurar check semanal para `ops/restic-check.sh`
-3. abrir PR da branch `codex/n8n-dedicated-success-checklist` se ainda nao estiver aberta
-4. gerar `.env` real do runtime na VPS com `python3 ops/provision-n8n-dedicated.py --tenant-id cli-eleva-pilot --domain wf-pilot.elevalocal.shop --force`
-5. executar deploy controlado de `tenants/runtime/cli-eleva-pilot` com `docker compose --env-file .env up -d`
-6. validar `curl -I https://wf-pilot.elevalocal.shop`, login owner, importacao manual de ao menos 1 workflow e smoke test
-7. somente depois atualizar `tenants/manifests/cli-eleva-pilot.yaml` para `dedicated` em commit separado
+1. abrir ou revisar PR da branch `codex/n8n-dedicated-success-checklist` contra `main`
+2. apos merge, atualizar a VPS com `git pull origin main` em `/root/elevalocal-infra`
+3. seguir para Prompt 2.1 Observability
+4. registrar evidencia de login owner e importacao manual de ao menos 1 workflow no `wf-pilot.elevalocal.shop`
+5. manter `tenants/manifests/cli-eleva-pilot.yaml` em `shared-foundation` ate cutover/migracao real; mudar para `dedicated` apenas em commit separado
+6. configurar/conferir Healthchecks semanal para `ops/restic-check.sh`
+7. tratar backlog P0 de Chatwoot freeze para remover `latest`
 
 ## Snapshot de verificacao
 
-- `restic snapshots` -> snapshot `e77cf8f6` listado
-- `ops/restic-check.sh` -> `no errors were found`
-- restore `e77cf8f6` em `/tmp/r` + `diff -qr` -> sem diferencas
+- `curl.exe -I --max-time 20 https://wf-pilot.elevalocal.shop` -> `HTTP/1.1 200 OK`
+- `bash ops/smoke-test-tenant.sh --tenant-id cli-eleva-pilot --domain wf-pilot.elevalocal.shop` -> `SMOKE_OK tenant=cli-eleva-pilot`
+- `python -m py_compile ops/provision-n8n-dedicated.py` -> ok
 - `pytest ops/tests -q` -> `13 passed`
-- `docker compose ... config --quiet` do runtime n8n dedicado -> ok
-- VPS: compose sem `.env` real falhou antes de criar container; `docker ps | grep pilot` vazio
+- `docker compose ... config --quiet` do runtime `cli-eleva-pilot` -> ok
+- dry-run `cli-demo-externo` -> Redis namespaced + labels Coolify corretas

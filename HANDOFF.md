@@ -6,37 +6,31 @@ Infraestrutura operacional da `Eleva Local` na VPS Hostinger. Este repo cobre st
 
 ## Estado atual
 
-- `n8n`, `Chatwoot` e `Evolution` seguem operacionais no stack atual
-- offsite backup com `restic` + Backblaze B2 foi ativado e validado
-- snapshot remoto `e77cf8f6` existe e foi restaurado com sucesso
-- chave B2 exposta durante a operacao foi rotacionada e validada
-- runtime dedicado do `n8n` para o tenant interno `cli-eleva-pilot` foi preparado no repositorio, mas ainda nao foi deployado
-- tentativa de deploy do runtime dedicado sem `.env` real falhou antes de criar container; nao houve impacto no shared
-- o stack shared `n8n-mamtm8g3b2mdh7ko0hxdcyr3` nao deve ser alterado na fase de preparacao do dedicated
+- `n8n`, `Chatwoot` e `Evolution` compartilhados seguem como rollback operacional
+- offsite backup com `restic` + Backblaze B2 foi ativado e validado anteriormente
+- `n8n` dedicado do tenant interno `cli-eleva-pilot` esta no ar em `https://wf-pilot.elevalocal.shop`
+- compose vivo da VPS precisou de hotfix manual; provisioner ja foi corrigido para reproduzir esse padrao
+- Redis do n8n dedicated deve ser sempre namespaced por tenant para evitar colisao via rede Coolify
+- Traefik do Coolify deve usar `entrypoints=http`/`entrypoints=https`, redirect middleware, `tls=true` e `router.service=<service>`
+- o stack shared `n8n-mamtm8g3b2mdh7ko0hxdcyr3` nao deve ser alterado durante observability e preparacao de cutover
 
 ## O que ja foi provado
 
-- backup offsite real roda em `BACKUP_MODE=restic`
-- `restic snapshots` lista `e77cf8f6`
-- `ops/restic-check.sh` retornou sem erros
-- restore de `e77cf8f6` foi comparado contra o backup local sem diferencas
-- runtime dedicado gera compose valido para `wf-pilot.elevalocal.shop`
+- dominio `https://wf-pilot.elevalocal.shop` responde `HTTP 200`
+- smoke script do tenant retorna `SMOKE_OK`
+- provisioner gera compose valido para o pilot e para `cli-demo-externo`
 - testes locais do repo passam com `13 passed`
+- compose do runtime `cli-eleva-pilot` passa em `docker compose config --quiet`
 
 ## Proximo passo concreto
 
-1. confirmar Healthchecks diario no painel
-2. criar/configurar Healthchecks semanal para `ops/restic-check.sh`
-3. abrir PR da branch `codex/n8n-dedicated-success-checklist`, se ainda nao foi aberta
-4. na VPS, gerar `.env` real com `python3 ops/provision-n8n-dedicated.py --tenant-id cli-eleva-pilot --domain wf-pilot.elevalocal.shop --force`
-5. executar deploy controlado de `tenants/runtime/cli-eleva-pilot` com `docker compose --env-file .env up -d`
-6. validar:
-   - `curl -I https://wf-pilot.elevalocal.shop`
-   - login owner
-   - importacao manual de ao menos 1 workflow
-   - `ops/smoke-test-tenant.sh`
-   - shared `n8n-mamtm8g3b2mdh7ko0hxdcyr3` ainda no ar
-7. apos migracao real, atualizar `tenants/manifests/cli-eleva-pilot.yaml` para `dedicated` em commit separado
+1. abrir/revisar PR da branch `codex/n8n-dedicated-success-checklist`
+2. apos merge, atualizar a copia da VPS com `git pull origin main`
+3. executar Prompt 2.1 Observability
+4. registrar evidencia de login owner e importacao manual de ao menos 1 workflow no dedicated
+5. manter `tenants/manifests/cli-eleva-pilot.yaml` em `shared-foundation` ate cutover real; mudar para `dedicated` em commit separado
+6. configurar/conferir Healthchecks semanal para `ops/restic-check.sh`
+7. tratar Chatwoot freeze para substituir imagem `latest`
 
 ## Observacoes operacionais
 
