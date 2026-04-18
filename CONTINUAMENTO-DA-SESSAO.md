@@ -17,10 +17,12 @@ PR aberto:
 
 - `https://github.com/elevalocalagencia-cloud/Eleva-local-empresa/pull/1`
 
+Deploy do codigo corrigido na VPS nao foi executado daqui porque SSH para `root@2.24.199.157:22` deu timeout. O stack dedicado ja esta no ar pelo hotfix manual; falta sincronizar o repo da VPS apos merge.
+
 ## Proximo passo imediato
 
 1. revisar/mergear PR `https://github.com/elevalocalagencia-cloud/Eleva-local-empresa/pull/1`
-2. depois do merge, fazer `git pull origin main` na VPS em `/root/elevalocal-infra`
+2. depois do merge, fazer `git pull origin main` na VPS em `/root/elevalocal-infra` via console/SSH funcional
 3. iniciar Prompt 2.1 Observability
 4. registrar evidencia de login owner e importacao manual de 1 workflow no dedicated
 5. so depois de cutover/migracao real atualizar `tenants/manifests/cli-eleva-pilot.yaml` para `dedicated`
@@ -54,6 +56,7 @@ git pull origin main
 ## Travas abertas
 
 - PR aberto e aguardando revisao/merge
+- SSH local para VPS indisponivel nesta sessao; deploy/pull remoto ficou pendente
 - manifest do pilot ainda deve permanecer `shared-foundation` ate migracao/cutover real
 - webhook smoke retorna `404` ate importar workflow de smoke
 - Healthchecks semanal do `restic-check` ainda falta

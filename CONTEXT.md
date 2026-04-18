@@ -18,6 +18,7 @@
   - `392d660 fase2/0.1 provisioner n8n: fix redis collision + coolify labels`
 - PR aberto:
   - `https://github.com/elevalocalagencia-cloud/Eleva-local-empresa/pull/1`
+- deploy/pull na VPS nao foi executado a partir deste ambiente porque SSH para `root@2.24.199.157:22` deu timeout
 
 ## Validacoes executadas
 
@@ -35,5 +36,6 @@
 - login owner e importacao manual de ao menos 1 workflow no dedicated ainda precisam ser registrados como evidencia
 - webhook de smoke ainda retorna `404`, esperado enquanto o workflow de smoke nao for importado
 - PR aberto e pronto para revisao/merge: `https://github.com/elevalocalagencia-cloud/Eleva-local-empresa/pull/1`
+- deploy do codigo corrigido na VPS depende de merge do PR e acesso SSH/console para rodar `git pull origin main`
 - Healthchecks semanal para `ops/restic-check.sh` ainda precisa ser configurado/conferido
 - Chatwoot ainda tem backlog P0 de version freeze porque segue em `latest`

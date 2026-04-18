@@ -20,11 +20,12 @@ Readiness de launch:
 - branch atual: `codex/n8n-dedicated-success-checklist`
 - ultimo commit funcional pushado: `392d660 fase2/0.1 provisioner n8n: fix redis collision + coolify labels`
 - PR aberto: `https://github.com/elevalocalagencia-cloud/Eleva-local-empresa/pull/1`
+- deploy/pull na VPS pendente; SSH local para `root@2.24.199.157:22` deu timeout
 
 ## Proximo passo concreto
 
 1. revisar/mergear PR `https://github.com/elevalocalagencia-cloud/Eleva-local-empresa/pull/1`
-2. apos merge, atualizar a VPS com `git pull origin main` em `/root/elevalocal-infra`
+2. apos merge, atualizar a VPS com `git pull origin main` em `/root/elevalocal-infra` usando console/SSH funcional
 3. seguir para Prompt 2.1 Observability
 4. registrar evidencia de login owner e importacao manual de ao menos 1 workflow no `wf-pilot.elevalocal.shop`
 5. manter `tenants/manifests/cli-eleva-pilot.yaml` em `shared-foundation` ate cutover/migracao real; mudar para `dedicated` apenas em commit separado
