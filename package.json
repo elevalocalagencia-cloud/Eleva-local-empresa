@@ -1,0 +1,12 @@
+{
+  "name": "elevalocal-infra",
+  "private": true,
+  "packageManager": "pnpm@10.19.0",
+  "scripts": {
+    "portal:dev": "pnpm --filter portal dev",
+    "portal:build": "pnpm --filter portal build",
+    "portal:lint": "pnpm --filter portal lint",
+    "portal:typecheck": "pnpm --filter portal typecheck",
+    "portal:test": "pnpm --filter portal test"
+  }
+}

@@ -15,7 +15,7 @@ Este arquivo existe para eliminar conflito entre:
 - este ledger define prioridade, status e impacto sobre `GO / NO-GO`
 - `LAUNCH-AUDIT.md` resume a decisao executiva a partir deste ledger
 - `LAUNCH-EXECUTION-BOARD.md` usa este ledger para acompanhar execucao
-- `STATE.md` e `HANDOFF.md` nao devem redefinir prioridade de launch
+- handoffs antigos de sessao nao devem redefinir prioridade de launch
 
 ## Legenda de status
 
