@@ -2,49 +2,82 @@
 
 ## Objetivo
 
-Executar o primeiro provisionamento real de cliente externo com risco controlado,
-usando o tenant de simulacao `cli-demo-externo` como baseline operacional.
+Deixar o rollout do primeiro cliente externo em estado `shelf-ready`.
 
-Este documento fecha o ultimo bloqueio P0 da auditoria de lancamento que ainda
-depende de prova ponta a ponta em ambiente real.
+Ou seja: a parte tecnica esta preparada, com scaffold, checklist, inventario e
+evidencia padronizada. A execucao real continua bloqueada ate existir cliente
+comercial valido.
 
-## Baseline atual
+## Estado atual
 
+- stack tecnica pronta para provisionamento controlado
 - tenant de simulacao validado: `cli-demo-externo`
-- manifest valido no registry real
-- `Evolution`: `shared-foundation` com instancia dedicada por tenant
-- `Chatwoot`: `shared-foundation` com inbox dedicada por tenant
-- `n8n`: `dedicated` para cliente externo
+- portal sem hardcode do tenant piloto
+- evidencias por tenant padronizadas em
+  [tenants/evidence/TEMPLATE-evidence.md](C:/Users/PEDROSO/Downloads/elevalocal-infra/tenants/evidence/TEMPLATE-evidence.md)
+- contratos assinados fora do repo publico, com politica em
+  [legal/signed/README.md](C:/Users/PEDROSO/Downloads/elevalocal-infra/legal/signed/README.md)
 
-## Regra de uso
+## Pre-requisitos comerciais obrigatorios
 
-- nao provisionar cliente externo direto na VPS sem manifest valido
-- nao usar `n8n shared-foundation` para cliente externo
-- nao fazer go-live sem backup novo e rollback claro
-- nao marcar lancamento como pronto sem smoke test por stack
+Sem estes insumos, o gate nao pode ser executado de ponta a ponta:
 
-## Sequencia executiva
+- razao social e nome fantasia do cliente
+- CNPJ valido
+- `tenant_id` e `slug` finais
+- owner operacional real com nome, e-mail e telefone
+- numero WhatsApp dedicado do cliente
+- cofre definido para segredos reais
+- NDA assinado
+- PSA assinado
+- DPA assinado
+- usuario inicial do portal com membership em `tenant_members`
+- janela de go-live aprovada
 
-1. promover o tenant demo para cliente real equivalente ou gerar tenant real
-2. preencher owners e cofres reais de segredos
+## O que ja esta pronto para rodar
+
+1. gerar tenant real com [ops/create-tenant.py](C:/Users/PEDROSO/Downloads/elevalocal-infra/ops/create-tenant.py)
+2. validar manifest com
+   [ops/validate-tenant-manifest.py](C:/Users/PEDROSO/Downloads/elevalocal-infra/ops/validate-tenant-manifest.py)
 3. provisionar `Evolution`
 4. provisionar `Chatwoot`
 5. provisionar `n8n dedicated`
-6. executar smoke tests ponta a ponta
-7. registrar rollback path, owners e status final
+6. registrar evidencia datada em
+   [tenants/evidence/TEMPLATE-evidence.md](C:/Users/PEDROSO/Downloads/elevalocal-infra/tenants/evidence/TEMPLATE-evidence.md)
+7. registrar assinados fora do repo publico conforme
+   [legal/signed/README.md](C:/Users/PEDROSO/Downloads/elevalocal-infra/legal/signed/README.md)
+
+## Sequencia executiva
+
+1. confirmar os pre-requisitos comerciais
+2. executar backup novo antes da mudanca
+3. gerar e validar o manifest do tenant
+4. preencher inventario de segredos sem expor segredo em markdown
+5. provisionar `Evolution`
+6. provisionar `Chatwoot`
+7. provisionar `n8n dedicated`
+8. criar membership do usuario inicial no portal
+9. rodar smoke tests ponta a ponta
+10. registrar rollback path, owner, data e status final
 
 ## Checklist de pre-go-live
 
-### Tenant e governanca
+### A. Insumo comercial
 
-- [ ] tenant real definido com `tenant_id` e `slug` finais
+- [ ] cliente real definido com razao social, CNPJ, `tenant_id` e `slug`
+- [ ] owner operacional real registrado
+- [ ] NDA assinado e arquivado fora do repo publico
+- [ ] PSA assinado e arquivado fora do repo publico
+- [ ] DPA assinado e arquivado fora do repo publico
+- [ ] cofre real definido para segredos do tenant
+- [ ] usuario inicial do portal definido
+- [ ] janela de go-live aprovada
+
+### B. Preparacao tecnica
+
 - [ ] manifest revisado e validado no registry real
 - [ ] inventario de segredos preenchido sem segredo em markdown
-- [ ] owner operacional real registrado
 - [ ] checklist de onboarding revisado
-
-### Backup e seguranca
-
 - [ ] backup novo executado antes da mudanca
 - [ ] restore path conhecido por stack
 - [ ] offsite validado ou risco aceito formalmente para piloto controlado
@@ -124,10 +157,12 @@ Evidencia a registrar:
 - [ ] `registry.yaml` revisado
 - [ ] owner e data de revisao registrados
 - [ ] status final do tenant marcado corretamente
+- [ ] evidencia datada registrada em
+      [tenants/evidence/TEMPLATE-evidence.md](C:/Users/PEDROSO/Downloads/elevalocal-infra/tenants/evidence/TEMPLATE-evidence.md)
 
 ## Resultado esperado
 
-Ao concluir este checklist com evidencia completa, a operacao pode reavaliar o
-veredito da auditoria de lancamento e tentar mover o status para:
+Quando os insumos comerciais existirem e este checklist for concluido com
+evidencia completa, a operacao pode reavaliar o veredito de lancamento para:
 
 - `GO CONTROLADO para lancamento comercial inicial`

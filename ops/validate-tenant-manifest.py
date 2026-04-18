@@ -222,7 +222,10 @@ def iter_registry_entries(data: Any) -> list[dict[str, Any]]:
 
 
 def validate_registry_uniqueness(
-    manifest: dict[str, Any], registry: Any, manifest_path: Path | None = None
+    manifest: dict[str, Any],
+    registry: Any,
+    manifest_path: Path | None = None,
+    registry_path: Path | None = None,
 ) -> list[str]:
     errors: list[str] = []
     entries = iter_registry_entries(registry)
@@ -237,7 +240,15 @@ def validate_registry_uniqueness(
         entry_manifest_path = entry.get("manifest_path")
         if manifest_path_resolved and isinstance(entry_manifest_path, str):
             try:
-                if Path(entry_manifest_path).resolve() == manifest_path_resolved:
+                resolved_entry_path = Path(entry_manifest_path)
+                if not resolved_entry_path.is_absolute() and registry_path:
+                    resolved_entry_path = (
+                        registry_path.resolve().parent.parent / resolved_entry_path
+                    ).resolve()
+                else:
+                    resolved_entry_path = resolved_entry_path.resolve()
+
+                if resolved_entry_path == manifest_path_resolved:
                     continue
             except OSError:
                 pass
@@ -275,7 +286,10 @@ def main(argv: list[str] | None = None) -> int:
             registry_data = load_yaml(args.registry)
             errors.extend(
                 validate_registry_uniqueness(
-                    manifest_data, registry_data, manifest_path=args.manifest
+                    manifest_data,
+                    registry_data,
+                    manifest_path=args.manifest,
+                    registry_path=args.registry,
                 )
             )
     except ValueError as exc:

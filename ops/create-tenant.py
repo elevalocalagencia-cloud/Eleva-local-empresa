@@ -2,7 +2,9 @@
 from __future__ import annotations
 
 import argparse
+import shutil
 import sys
+import tempfile
 from pathlib import Path
 from typing import Any
 
@@ -44,6 +46,47 @@ def load_yaml(path: Path) -> Any:
 
 def ensure_parent(path: Path) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
+
+
+def write_outputs(
+    *,
+    manifest_path: Path,
+    secrets_path: Path,
+    onboarding_path: Path,
+    ops_path: Path,
+    registry_path: Path,
+    manifest: dict[str, Any],
+    registry: dict[str, Any],
+    company_name: str,
+    tenant_id: str,
+    slug: str,
+    onboarding_template: str,
+    ops_template: str,
+    secrets_template: str,
+) -> None:
+    for path in (manifest_path, secrets_path, onboarding_path, ops_path, registry_path):
+        ensure_parent(path)
+
+    manifest_path.write_text(
+        yaml.safe_dump(manifest, sort_keys=False, allow_unicode=True),
+        encoding="utf-8",
+    )
+    registry_path.write_text(
+        yaml.safe_dump(registry, sort_keys=False, allow_unicode=True),
+        encoding="utf-8",
+    )
+    secrets_path.write_text(
+        render_markdown("Inventario de Segredos", company_name, tenant_id, slug, secrets_template),
+        encoding="utf-8",
+    )
+    onboarding_path.write_text(
+        render_markdown("Onboarding Checklist", company_name, tenant_id, slug, onboarding_template),
+        encoding="utf-8",
+    )
+    ops_path.write_text(
+        render_markdown("Client Ops Checklist", company_name, tenant_id, slug, ops_template),
+        encoding="utf-8",
+    )
 
 
 def render_markdown(prefix: str, company_name: str, tenant_id: str, slug: str, template: str) -> str:
@@ -305,35 +348,56 @@ def main(argv: list[str] | None = None) -> int:
     secrets_template = (templates_root / "secrets-inventory.md").read_text(encoding="utf-8")
 
     if args.dry_run:
-        print(f"[dry-run] manifest: {manifest_path}")
-        print(f"[dry-run] registry: {registry_path}")
-        print(f"[dry-run] secrets: {secrets_path}")
-        print(f"[dry-run] onboarding: {onboarding_path}")
-        print(f"[dry-run] ops: {ops_path}")
+        preview_root = Path(tempfile.gettempdir()) / "elevalocal-create-tenant-dry-run" / args.tenant_id
+        if preview_root.exists():
+            shutil.rmtree(preview_root)
+
+        preview_manifest_path = preview_root / "tenants" / "manifests" / f"{args.tenant_id}.yaml"
+        preview_secrets_path = preview_root / "tenants" / "secrets" / f"{args.tenant_id}.md"
+        preview_onboarding_path = (
+            preview_root / "tenants" / "checklists" / f"{args.tenant_id}-onboarding.md"
+        )
+        preview_ops_path = preview_root / "tenants" / "checklists" / f"{args.tenant_id}-ops.md"
+        preview_registry_path = preview_root / "tenants" / "registry.yaml"
+
+        write_outputs(
+            manifest_path=preview_manifest_path,
+            secrets_path=preview_secrets_path,
+            onboarding_path=preview_onboarding_path,
+            ops_path=preview_ops_path,
+            registry_path=preview_registry_path,
+            manifest=manifest,
+            registry=registry,
+            company_name=args.company_name,
+            tenant_id=args.tenant_id,
+            slug=args.slug,
+            onboarding_template=onboarding_template,
+            ops_template=ops_template,
+            secrets_template=secrets_template,
+        )
+
+        print(f"[dry-run] preview_root: {preview_root}")
+        print(f"[dry-run] manifest: {preview_manifest_path}")
+        print(f"[dry-run] registry: {preview_registry_path}")
+        print(f"[dry-run] secrets: {preview_secrets_path}")
+        print(f"[dry-run] onboarding: {preview_onboarding_path}")
+        print(f"[dry-run] ops: {preview_ops_path}")
         return 0
 
-    for path in (manifest_path, secrets_path, onboarding_path, ops_path, registry_path):
-        ensure_parent(path)
-
-    manifest_path.write_text(
-        yaml.safe_dump(manifest, sort_keys=False, allow_unicode=True),
-        encoding="utf-8",
-    )
-    registry_path.write_text(
-        yaml.safe_dump(registry, sort_keys=False, allow_unicode=True),
-        encoding="utf-8",
-    )
-    secrets_path.write_text(
-        render_markdown("Inventario de Segredos", args.company_name, args.tenant_id, args.slug, secrets_template),
-        encoding="utf-8",
-    )
-    onboarding_path.write_text(
-        render_markdown("Onboarding Checklist", args.company_name, args.tenant_id, args.slug, onboarding_template),
-        encoding="utf-8",
-    )
-    ops_path.write_text(
-        render_markdown("Client Ops Checklist", args.company_name, args.tenant_id, args.slug, ops_template),
-        encoding="utf-8",
+    write_outputs(
+        manifest_path=manifest_path,
+        secrets_path=secrets_path,
+        onboarding_path=onboarding_path,
+        ops_path=ops_path,
+        registry_path=registry_path,
+        manifest=manifest,
+        registry=registry,
+        company_name=args.company_name,
+        tenant_id=args.tenant_id,
+        slug=args.slug,
+        onboarding_template=onboarding_template,
+        ops_template=ops_template,
+        secrets_template=secrets_template,
     )
 
     print(f"Tenant criado: {args.tenant_id}")
