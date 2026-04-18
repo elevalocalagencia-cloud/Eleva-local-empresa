@@ -11,6 +11,8 @@ fi
 
 RESTIC_REPOSITORY="${RESTIC_REPOSITORY:-}"
 RESTIC_PASSWORD_FILE="${RESTIC_PASSWORD_FILE:-}"
+HEALTHCHECK_PING_URL="${HEALTHCHECK_PING_URL:-}"
+HEALTHCHECK_URL_START="${HEALTHCHECK_URL_START:-}"
 HEALTHCHECK_URL_SUCCESS="${HEALTHCHECK_URL_SUCCESS:-}"
 HEALTHCHECK_URL_FAIL="${HEALTHCHECK_URL_FAIL:-}"
 B2_ACCOUNT_ID="${B2_ACCOUNT_ID:-}"
@@ -19,6 +21,13 @@ AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID:-}"
 AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY:-}"
 AWS_DEFAULT_REGION="${AWS_DEFAULT_REGION:-auto}"
 DRY_RUN="${DRY_RUN:-false}"
+
+if [[ -n "${HEALTHCHECK_PING_URL}" ]]; then
+  HEALTHCHECK_PING_URL="${HEALTHCHECK_PING_URL%/}"
+  HEALTHCHECK_URL_START="${HEALTHCHECK_URL_START:-${HEALTHCHECK_PING_URL}/start}"
+  HEALTHCHECK_URL_SUCCESS="${HEALTHCHECK_URL_SUCCESS:-${HEALTHCHECK_PING_URL}}"
+  HEALTHCHECK_URL_FAIL="${HEALTHCHECK_URL_FAIL:-${HEALTHCHECK_PING_URL}/fail}"
+fi
 
 log() {
   printf '[%s] %s\n' "$(date +%F' '%T)" "$*"
@@ -72,6 +81,10 @@ notify_healthcheck() {
 
 main() {
   local latest_snapshot latest_id
+  local icon_success icon_warn
+
+  icon_success=$'\u2705'
+  icon_warn=$'\u26A0\uFE0F'
 
   require_cmd restic
 
@@ -91,11 +104,13 @@ main() {
 
   if [[ "${DRY_RUN}" == "true" ]]; then
     log "dry-run: restic check completo"
-    notify_healthcheck "${HEALTHCHECK_URL_SUCCESS}" "✅ Restic check completo OK — snapshot dry-run"
+    notify_healthcheck "${HEALTHCHECK_URL_START}" "restic-check-start"
+    notify_healthcheck "${HEALTHCHECK_URL_SUCCESS}" "${icon_success} Restic check completo OK - snapshot dry-run"
     return 0
   fi
 
   require_cmd python3
+  notify_healthcheck "${HEALTHCHECK_URL_START}" "restic-check-start"
 
   if restic_env check; then
     latest_snapshot="$(restic_env snapshots --latest 1 --json)"
@@ -107,7 +122,7 @@ payload = json.loads(sys.argv[1])
 print(payload[0]["short_id"] if payload else "unknown")
 PY
 )"
-    notify_healthcheck "${HEALTHCHECK_URL_SUCCESS}" "✅ Restic check completo OK — snapshot ${latest_id}"
+    notify_healthcheck "${HEALTHCHECK_URL_SUCCESS}" "${icon_success} Restic check completo OK - snapshot ${latest_id}"
     return 0
   fi
 
@@ -122,7 +137,7 @@ PY
 )"
   notify_healthcheck \
     "${HEALTHCHECK_URL_FAIL}" \
-    "⚠️ Restic check detectou corrupção — snapshot ${latest_id} — NÃO usar esse snapshot para restore"
+    "${icon_warn} Restic check detectou corrupcao - snapshot ${latest_id} - NAO usar esse snapshot para restore"
   exit 1
 }
 

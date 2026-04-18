@@ -18,14 +18,15 @@
 ## Revisao offsite com restic
 
 1. validar que `RESTIC_PASSWORD_FILE` aponta para segredo mantido via `sops` + `age`
-2. executar `ops/restic-check.sh` no dry-run em ambiente controlado antes da janela semanal
-3. confirmar que o ultimo backup enviou webhook de sucesso:
-   - `✅ Backup Eleva Local OK — snapshot {snapshot_id} — {size_gb}GB — {duration}`
-4. confirmar que existe teste controlado do webhook de falha:
-   - `🚨 Backup Eleva Local FALHOU — stack: {stack} — erro: {error_summary} — verifique /var/log/elevalocal-backup.log`
-5. confirmar que alertas de integridade estao roteados:
-   - `⚠️ Restic check detectou corrupção — snapshot {id} — NÃO usar esse snapshot para restore`
-6. se `OFFSITE_BUCKET_QUOTA_GB` estiver configurado, revisar se o bucket segue abaixo de 80% da cota
+2. validar que o `HEALTHCHECK_PING_URL` foi copiado da tela do Healthchecks e que o script deriva `/start` e `/fail`
+3. executar `ops/restic-check.sh` no dry-run em ambiente controlado antes da janela semanal
+4. confirmar que o ultimo backup enviou webhook de sucesso:
+   - `✅ Backup Eleva Local OK - snapshot {snapshot_id} - {size_gb}GB - {duration}`
+5. confirmar que existe teste controlado do webhook de falha:
+   - `🚨 Backup Eleva Local FALHOU - stack: {stack} - erro: {error_summary} - verifique /var/log/elevalocal-backup.log`
+6. confirmar que alertas de integridade estao roteados:
+   - `⚠️ Restic check detectou corrupcao - snapshot {id} - NAO usar esse snapshot para restore`
+7. se `OFFSITE_BUCKET_QUOTA_GB` estiver configurado, revisar se o bucket segue abaixo de 80% da cota
 
 ## Revisao por tenant
 

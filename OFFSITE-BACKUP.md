@@ -34,8 +34,8 @@ Variaveis obrigatorias para `restic`:
 - `RESTIC_REPOSITORY=b2:elevalocal-backups-prod:/prod`
   ou `RESTIC_REPOSITORY=s3:https://{account}.r2.cloudflarestorage.com/elevalocal-backups`
 - `RESTIC_PASSWORD_FILE=/caminho/seguro/restic-password`
-- `HEALTHCHECK_URL_SUCCESS=...`
-- `HEALTHCHECK_URL_FAIL=...`
+- `HEALTHCHECK_PING_URL=https://hc-ping.com/<uuid-do-check>`
+- opcionalmente, override manual de `HEALTHCHECK_URL_START`, `HEALTHCHECK_URL_SUCCESS` e `HEALTHCHECK_URL_FAIL`
 
 Credenciais por provider:
 
@@ -46,6 +46,7 @@ Credenciais por provider:
 
 - backup diario: `03:00 UTC`
 - check completo semanal: domingo `04:00 UTC`
+- Healthchecks: usar um check diario para backup e, idealmente, um segundo check semanal para `ops/restic-check.sh`
 - check amostral diario apos backup: `restic check --read-data-subset=5%`
 - retencao remota: `--keep-daily 7 --keep-weekly 4 --keep-monthly 12`
 - nos primeiros 30 dias: executar `forget` sem `--prune`

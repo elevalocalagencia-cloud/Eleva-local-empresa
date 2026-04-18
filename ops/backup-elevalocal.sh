@@ -16,6 +16,8 @@ OFFSITE_TARGET="${OFFSITE_TARGET:-}"
 BACKUP_MODE="${BACKUP_MODE:-}"
 RESTIC_REPOSITORY="${RESTIC_REPOSITORY:-}"
 RESTIC_PASSWORD_FILE="${RESTIC_PASSWORD_FILE:-}"
+HEALTHCHECK_PING_URL="${HEALTHCHECK_PING_URL:-}"
+HEALTHCHECK_URL_START="${HEALTHCHECK_URL_START:-}"
 HEALTHCHECK_URL_SUCCESS="${HEALTHCHECK_URL_SUCCESS:-}"
 HEALTHCHECK_URL_FAIL="${HEALTHCHECK_URL_FAIL:-}"
 B2_ACCOUNT_ID="${B2_ACCOUNT_ID:-}"
@@ -27,6 +29,13 @@ OFFSITE_BUCKET_QUOTA_GB="${OFFSITE_BUCKET_QUOTA_GB:-}"
 BACKUP_LOG_FILE="${BACKUP_LOG_FILE:-/var/log/elevalocal-backup.log}"
 DRY_RUN="${DRY_RUN:-false}"
 TIMESTAMP="${BACKUP_TIMESTAMP:-$(date +%F-%H%M%S)}"
+
+if [[ -n "${HEALTHCHECK_PING_URL}" ]]; then
+  HEALTHCHECK_PING_URL="${HEALTHCHECK_PING_URL%/}"
+  HEALTHCHECK_URL_START="${HEALTHCHECK_URL_START:-${HEALTHCHECK_PING_URL}/start}"
+  HEALTHCHECK_URL_SUCCESS="${HEALTHCHECK_URL_SUCCESS:-${HEALTHCHECK_PING_URL}}"
+  HEALTHCHECK_URL_FAIL="${HEALTHCHECK_URL_FAIL:-${HEALTHCHECK_PING_URL}/fail}"
+fi
 
 if [[ -z "${BACKUP_MODE}" ]]; then
   if [[ "${OFFSITE_ENABLED}" == "true" ]]; then
@@ -128,10 +137,17 @@ notify_healthcheck() {
 notify_failure() {
   local stack="$1"
   local error_summary="$2"
+  local icon_fail
+
+  icon_fail=$'\U0001F6A8'
 
   notify_healthcheck \
     "${HEALTHCHECK_URL_FAIL}" \
-    "🚨 Backup Eleva Local FALHOU — stack: ${stack} — erro: ${error_summary} — verifique ${BACKUP_LOG_FILE}"
+    "${icon_fail} Backup Eleva Local FALHOU - stack: ${stack} - erro: ${error_summary} - verifique ${BACKUP_LOG_FILE}"
+}
+
+notify_start() {
+  notify_healthcheck "${HEALTHCHECK_URL_START}" "backup-start"
 }
 
 write_placeholder_file() {
@@ -277,14 +293,17 @@ import sys
 raise SystemExit(0 if float(sys.argv[1]) < 80 else 1)
 PY
   then
+    local icon_warn
+    icon_warn=$'\u26A0\uFE0F'
     notify_healthcheck \
       "${HEALTHCHECK_URL_FAIL}" \
-      "⚠️ Backup Eleva Local acima de 80% da cota offsite — uso: ${usage_pct}% — revisar bucket"
+      "${icon_warn} Backup Eleva Local acima de 80% da cota offsite - uso: ${usage_pct}% - revisar bucket"
   fi
 }
 
 restic_backup() {
   local started_at ended_at duration output snapshot_id size_gb
+  local icon_success
 
   ensure_restic_config
   ensure_restic_repository
@@ -313,6 +332,7 @@ restic_backup() {
 
   ended_at="$(date +%s)"
   duration="$(format_duration "$((ended_at - started_at))")"
+  icon_success=$'\u2705'
 
   if [[ "${DRY_RUN}" == "true" ]]; then
     log "dry-run: restic check --read-data-subset=5%"
@@ -325,7 +345,7 @@ restic_backup() {
   monitor_bucket_usage
   notify_healthcheck \
     "${HEALTHCHECK_URL_SUCCESS}" \
-    "✅ Backup Eleva Local OK — snapshot ${snapshot_id} — ${size_gb}GB — ${duration}"
+    "${icon_success} Backup Eleva Local OK - snapshot ${snapshot_id} - ${size_gb}GB - ${duration}"
 }
 
 write_manifest() {
@@ -378,6 +398,7 @@ main() {
   prepare_environment
 
   trap 'notify_failure "${BACKUP_MODE}" "erro inesperado na execucao do backup"' ERR
+  notify_start
 
   log "iniciando backup completo da elevalocal em ${DEST_DIR} (modo=${BACKUP_MODE})"
   write_manifest

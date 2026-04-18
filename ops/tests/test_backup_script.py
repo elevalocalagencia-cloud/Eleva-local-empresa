@@ -25,6 +25,7 @@ def test_backup_script_dry_run_local_only_generates_expected_structure(tmp_path:
                 "DRY_RUN=true",
                 f"BACKUP_TIMESTAMP={timestamp}",
                 "BACKUP_LOG_FILE=./backup.log",
+                "HEALTHCHECK_PING_URL=https://hc-ping.com/test-backup",
             ]
         )
         + "\n",
@@ -67,5 +68,6 @@ def test_backup_script_dry_run_local_only_generates_expected_structure(tmp_path:
     assert "dry_run=true" in manifest
 
     log_output = log_file.read_text(encoding="utf-8")
+    assert "https://hc-ping.com/test-backup/start <- backup-start" in log_output
     assert "iniciando backup completo da elevalocal" in log_output
     assert "backup concluido" in log_output

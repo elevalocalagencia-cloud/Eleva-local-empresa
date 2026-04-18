@@ -20,6 +20,7 @@ Padronizar o bootstrap, a operacao diaria e o restore seletivo do backup offsite
    - `BACKUP_MODE=restic`
    - `RESTIC_REPOSITORY=...`
    - `RESTIC_PASSWORD_FILE=...`
+   - `HEALTHCHECK_PING_URL=...`
    - credenciais do provider via env
 4. se a origem da senha estiver cifrada em `sops`, decriptar para arquivo temporario antes do cron:
 
@@ -108,14 +109,25 @@ restic key passwd
 
 ## Healthchecks.io
 
+Integracao recomendada:
+
+1. criar um check diario para `ops/backup-elevalocal.sh`
+2. copiar a `Ping URL` mostrada na tela do Healthchecks
+3. preencher `HEALTHCHECK_PING_URL` no `backup-elevalocal.env`
+4. o script deriva automaticamente:
+   - start: `<ping-url>/start`
+   - sucesso: `<ping-url>`
+   - falha: `<ping-url>/fail`
+5. para `ops/restic-check.sh`, o ideal e criar um segundo check semanal e usar outro `HEALTHCHECK_PING_URL` no ambiente desse cron
+
 Payloads esperados:
 
 - sucesso:
-  - `✅ Backup Eleva Local OK — snapshot {snapshot_id} — {size_gb}GB — {duration}`
+  - `✅ Backup Eleva Local OK - snapshot {snapshot_id} - {size_gb}GB - {duration}`
 - falha:
-  - `🚨 Backup Eleva Local FALHOU — stack: {stack} — erro: {error_summary} — verifique /var/log/elevalocal-backup.log`
+  - `🚨 Backup Eleva Local FALHOU - stack: {stack} - erro: {error_summary} - verifique /var/log/elevalocal-backup.log`
 - integridade:
-  - `⚠️ Restic check detectou corrupção — snapshot {id} — NÃO usar esse snapshot para restore`
+  - `⚠️ Restic check detectou corrupcao - snapshot {id} - NAO usar esse snapshot para restore`
 
 ## Guardrails
 
