@@ -180,6 +180,22 @@ Usar as mensagens abaixo exatamente como copy operacional para a janela:
 - [ ] compartilhado mantido como fallback
 - [ ] rollback testado ou pronto para acao
 
+## Licoes aprendidas — Fase 1 Prompt 1.3-B
+
+### Bug 1: colisao de hostname redis via rede coolify
+
+- sintoma: `NOAUTH Authentication required` em crashloop no `n8n` dedicado.
+- causa raiz: o service `redis` podia resolver o Redis da stack shared pela rede externa `coolify`, onde havia auth diferente da configuracao do dedicado.
+- fix: service renomeado para `{tenant_id}-redis`, aplicado no provisioner e refletido em `depends_on` e `QUEUE_BULL_REDIS_HOST` do `n8n` e do `n8n-worker`.
+- validacao: `grep` em `ops/provision-n8n-dedicated.py` deve mostrar `{tenant_id}-redis` ou `redis_service_name` cobrindo service, `depends_on` x2 e `QUEUE_BULL_REDIS_HOST` x2.
+
+### Bug 2: labels Traefik fora do padrao Coolify
+
+- sintoma: `404` em `http://dominio`; TLS e roteamento nao seguiam a convencao operacional esperada no Coolify.
+- causa raiz: labels usavam `websecure` sem o router HTTP de redirect esperado pelo Traefik do Coolify.
+- fix: labels reescritas para o padrao Coolify observado na VPS: router HTTP com middleware `redirect-to-https`, router HTTPS com `entrypoints=https`, `tls=true`, `tls.certresolver=letsencrypt`, `router.service=<service>` e service amarrado na porta `5678`.
+- validacao: `render_compose` deve emitir router `-http`, router TLS, middleware `redirect-to-https` e `router.service` amarrado ao service do tenant.
+
 ## Regras finais
 
 - nao automatizar a migracao de credenciais

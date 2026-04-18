@@ -1,4 +1,4 @@
-name: cli-eleva-pilot-n8n
+name: cli-demo-externo-n8n
 
 services:
   n8n:
@@ -6,7 +6,7 @@ services:
     restart: unless-stopped
     depends_on:
       - postgresql
-      - cli-eleva-pilot-redis
+      - cli-demo-externo-redis
     environment:
       DB_TYPE: postgresdb
       DB_POSTGRESDB_HOST: postgresql
@@ -23,7 +23,7 @@ services:
       N8N_PROXY_HOPS: "1"
       N8N_SECURE_COOKIE: "true"
       N8N_USER_MANAGEMENT_JWT_SECRET: ${N8N_USER_MANAGEMENT_JWT_SECRET}
-      QUEUE_BULL_REDIS_HOST: cli-eleva-pilot-redis
+      QUEUE_BULL_REDIS_HOST: cli-demo-externo-redis
       QUEUE_BULL_REDIS_PORT: "6379"
       WEBHOOK_URL: https://${N8N_DOMAIN}
     volumes:
@@ -33,15 +33,15 @@ services:
       - traefik
     labels:
       - traefik.enable=true
-      - traefik.http.routers.n8n-pilot-http.rule=Host(`wf-pilot.elevalocal.shop`)
-      - traefik.http.routers.n8n-pilot-http.entrypoints=http
-      - traefik.http.routers.n8n-pilot-http.middlewares=redirect-to-https
-      - traefik.http.routers.n8n-pilot.rule=Host(`wf-pilot.elevalocal.shop`)
-      - traefik.http.routers.n8n-pilot.entrypoints=https
-      - traefik.http.routers.n8n-pilot.tls=true
-      - traefik.http.routers.n8n-pilot.tls.certresolver=letsencrypt
-      - traefik.http.routers.n8n-pilot.service=n8n-pilot
-      - traefik.http.services.n8n-pilot.loadbalancer.server.port=5678
+      - traefik.http.routers.n8n-demo-externo-http.rule=Host(`wf-demo-externo.elevalocal.shop`)
+      - traefik.http.routers.n8n-demo-externo-http.entrypoints=http
+      - traefik.http.routers.n8n-demo-externo-http.middlewares=redirect-to-https
+      - traefik.http.routers.n8n-demo-externo.rule=Host(`wf-demo-externo.elevalocal.shop`)
+      - traefik.http.routers.n8n-demo-externo.entrypoints=https
+      - traefik.http.routers.n8n-demo-externo.tls=true
+      - traefik.http.routers.n8n-demo-externo.tls.certresolver=letsencrypt
+      - traefik.http.routers.n8n-demo-externo.service=n8n-demo-externo
+      - traefik.http.services.n8n-demo-externo.loadbalancer.server.port=5678
       - traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https
 
   n8n-worker:
@@ -49,7 +49,7 @@ services:
     restart: unless-stopped
     depends_on:
       - postgresql
-      - cli-eleva-pilot-redis
+      - cli-demo-externo-redis
     command: worker
     environment:
       DB_TYPE: postgresdb
@@ -61,7 +61,7 @@ services:
       EXECUTIONS_MODE: queue
       N8N_ENCRYPTION_KEY: ${N8N_ENCRYPTION_KEY}
       N8N_USER_MANAGEMENT_JWT_SECRET: ${N8N_USER_MANAGEMENT_JWT_SECRET}
-      QUEUE_BULL_REDIS_HOST: cli-eleva-pilot-redis
+      QUEUE_BULL_REDIS_HOST: cli-demo-externo-redis
       QUEUE_BULL_REDIS_PORT: "6379"
     volumes:
       - n8n-data:/home/node/.n8n
@@ -80,7 +80,7 @@ services:
     networks:
       - internal
 
-  cli-eleva-pilot-redis:
+  cli-demo-externo-redis:
     image: ${REDIS_IMAGE}
     restart: unless-stopped
     command: redis-server --appendonly yes
@@ -91,15 +91,15 @@ services:
 
 volumes:
   n8n-data:
-    name: cli-eleva-pilot-n8n-data
+    name: cli-demo-externo-n8n-data
   postgresql-data:
-    name: cli-eleva-pilot-postgresql-data
+    name: cli-demo-externo-postgresql-data
   redis-data:
-    name: cli-eleva-pilot-redis-data
+    name: cli-demo-externo-redis-data
 
 networks:
   internal:
-    name: cli-eleva-pilot-net
+    name: cli-demo-externo-net
     driver: bridge
   traefik:
     external: true

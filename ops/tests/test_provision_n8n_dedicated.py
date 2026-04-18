@@ -65,7 +65,19 @@ def test_dry_run_prints_dedicated_compose_without_writing(tmp_path: Path) -> Non
     assert "postgres:16.4-alpine" in result.stdout
     assert "redis:7.4-alpine" in result.stdout
     assert "cli-eleva-pilot-net" in result.stdout
-    assert "traefik.http.routers.n8n-eleva-pilot.rule=Host(`wf-pilot.elevalocal.shop`)" in result.stdout
+    assert "traefik.http.routers.n8n-pilot-http.rule=Host(`wf-pilot.elevalocal.shop`)" in result.stdout
+    assert "traefik.http.routers.n8n-pilot-http.entrypoints=http" in result.stdout
+    assert "traefik.http.routers.n8n-pilot-http.middlewares=redirect-to-https" in result.stdout
+    assert "traefik.http.routers.n8n-pilot.rule=Host(`wf-pilot.elevalocal.shop`)" in result.stdout
+    assert "traefik.http.routers.n8n-pilot.entrypoints=https" in result.stdout
+    assert "traefik.http.routers.n8n-pilot.tls=true" in result.stdout
+    assert "traefik.http.routers.n8n-pilot.tls.certresolver=letsencrypt" in result.stdout
+    assert "traefik.http.routers.n8n-pilot.service=n8n-pilot" in result.stdout
+    assert "traefik.http.services.n8n-pilot.loadbalancer.server.port=5678" in result.stdout
+    assert "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https" in result.stdout
+    assert "QUEUE_BULL_REDIS_HOST: cli-eleva-pilot-redis" in result.stdout
+    assert "  cli-eleva-pilot-redis:" in result.stdout
+    assert "entrypoints=websecure" not in result.stdout
     assert "mamtm8g3b2mdh7ko0hxdcyr3" not in result.stdout
     assert not (tmp_path / "tenants" / "runtime" / "cli-eleva-pilot").exists()
 
@@ -81,7 +93,16 @@ def test_generates_runtime_compose_and_env_example(tmp_path: Path) -> None:
     env_example = (runtime_dir / ".env.example").read_text(encoding="utf-8")
 
     assert "name: cli-eleva-pilot-n8n" in compose
-    assert "n8n-eleva-pilot" in compose
+    assert "n8n-pilot" in compose
+    assert "  cli-eleva-pilot-redis:" in compose
+    assert "QUEUE_BULL_REDIS_HOST: cli-eleva-pilot-redis" in compose
+    assert "      - cli-eleva-pilot-redis" in compose
+    assert "traefik.http.routers.n8n-pilot-http.middlewares=redirect-to-https" in compose
+    assert "traefik.http.routers.n8n-pilot.entrypoints=https" in compose
+    assert "traefik.http.routers.n8n-pilot.tls=true" in compose
+    assert "traefik.http.routers.n8n-pilot.service=n8n-pilot" in compose
+    assert "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https" in compose
+    assert "entrypoints=websecure" not in compose
     assert "cli-eleva-pilot-n8n-data" in compose
     assert "mamtm8g3b2mdh7ko0hxdcyr3" not in compose
     assert "N8N_DOMAIN=wf-pilot.elevalocal.shop" in env_example

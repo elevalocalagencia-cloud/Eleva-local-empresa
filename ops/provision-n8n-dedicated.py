@@ -25,6 +25,8 @@ class TenantRuntime:
     domain: str
     project_name: str
     router_name: str
+    http_router_name: str
+    redis_service_name: str
     internal_network: str
 
 
@@ -81,7 +83,9 @@ def build_runtime(manifest: dict[str, Any], domain: str | None) -> TenantRuntime
         slug=slug,
         domain=n8n_domain,
         project_name=f"{tenant_id}-n8n",
-        router_name=f"n8n-{slug}",
+        router_name=f"n8n-{short_slug(slug)}",
+        http_router_name=f"n8n-{short_slug(slug)}-http",
+        redis_service_name=f"{tenant_id}-redis",
         internal_network=f"cli-{slug}-net",
     )
 
@@ -95,7 +99,7 @@ services:
     restart: unless-stopped
     depends_on:
       - postgresql
-      - redis
+      - {runtime.redis_service_name}
     environment:
       DB_TYPE: postgresdb
       DB_POSTGRESDB_HOST: postgresql
@@ -112,7 +116,7 @@ services:
       N8N_PROXY_HOPS: "1"
       N8N_SECURE_COOKIE: "true"
       N8N_USER_MANAGEMENT_JWT_SECRET: ${{N8N_USER_MANAGEMENT_JWT_SECRET}}
-      QUEUE_BULL_REDIS_HOST: redis
+      QUEUE_BULL_REDIS_HOST: {runtime.redis_service_name}
       QUEUE_BULL_REDIS_PORT: "6379"
       WEBHOOK_URL: https://${{N8N_DOMAIN}}
     volumes:
@@ -122,17 +126,23 @@ services:
       - traefik
     labels:
       - traefik.enable=true
+      - traefik.http.routers.{runtime.http_router_name}.rule=Host(`{runtime.domain}`)
+      - traefik.http.routers.{runtime.http_router_name}.entrypoints=http
+      - traefik.http.routers.{runtime.http_router_name}.middlewares=redirect-to-https
       - traefik.http.routers.{runtime.router_name}.rule=Host(`{runtime.domain}`)
-      - traefik.http.routers.{runtime.router_name}.entrypoints=websecure
+      - traefik.http.routers.{runtime.router_name}.entrypoints=https
+      - traefik.http.routers.{runtime.router_name}.tls=true
       - traefik.http.routers.{runtime.router_name}.tls.certresolver=letsencrypt
+      - traefik.http.routers.{runtime.router_name}.service={runtime.router_name}
       - traefik.http.services.{runtime.router_name}.loadbalancer.server.port=5678
+      - traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https
 
   n8n-worker:
     image: ${{N8N_IMAGE}}
     restart: unless-stopped
     depends_on:
       - postgresql
-      - redis
+      - {runtime.redis_service_name}
     command: worker
     environment:
       DB_TYPE: postgresdb
@@ -144,7 +154,7 @@ services:
       EXECUTIONS_MODE: queue
       N8N_ENCRYPTION_KEY: ${{N8N_ENCRYPTION_KEY}}
       N8N_USER_MANAGEMENT_JWT_SECRET: ${{N8N_USER_MANAGEMENT_JWT_SECRET}}
-      QUEUE_BULL_REDIS_HOST: redis
+      QUEUE_BULL_REDIS_HOST: {runtime.redis_service_name}
       QUEUE_BULL_REDIS_PORT: "6379"
     volumes:
       - n8n-data:/home/node/.n8n
@@ -163,7 +173,7 @@ services:
     networks:
       - internal
 
-  redis:
+  {runtime.redis_service_name}:
     image: ${{REDIS_IMAGE}}
     restart: unless-stopped
     command: redis-server --appendonly yes
