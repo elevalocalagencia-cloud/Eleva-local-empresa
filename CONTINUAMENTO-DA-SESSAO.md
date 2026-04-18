@@ -13,9 +13,13 @@ Commit pushado:
 
 - `392d660 fase2/0.1 provisioner n8n: fix redis collision + coolify labels`
 
+PR aberto:
+
+- `https://github.com/elevalocalagencia-cloud/Eleva-local-empresa/pull/1`
+
 ## Proximo passo imediato
 
-1. garantir PR da branch `codex/n8n-dedicated-success-checklist` contra `main`
+1. revisar/mergear PR `https://github.com/elevalocalagencia-cloud/Eleva-local-empresa/pull/1`
 2. depois do merge, fazer `git pull origin main` na VPS em `/root/elevalocal-infra`
 3. iniciar Prompt 2.1 Observability
 4. registrar evidencia de login owner e importacao manual de 1 workflow no dedicated
@@ -49,7 +53,7 @@ git pull origin main
 
 ## Travas abertas
 
-- PR pode exigir abertura manual se GitHub CLI/token nao estiver disponivel
+- PR aberto e aguardando revisao/merge
 - manifest do pilot ainda deve permanecer `shared-foundation` ate migracao/cutover real
 - webhook smoke retorna `404` ate importar workflow de smoke
 - Healthchecks semanal do `restic-check` ainda falta

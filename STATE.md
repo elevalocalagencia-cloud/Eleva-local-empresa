@@ -19,10 +19,11 @@ Readiness de launch:
 - dry-run de `cli-demo-externo` confirmou que novos tenants usam o mesmo padrao corrigido
 - branch atual: `codex/n8n-dedicated-success-checklist`
 - ultimo commit funcional pushado: `392d660 fase2/0.1 provisioner n8n: fix redis collision + coolify labels`
+- PR aberto: `https://github.com/elevalocalagencia-cloud/Eleva-local-empresa/pull/1`
 
 ## Proximo passo concreto
 
-1. abrir ou revisar PR da branch `codex/n8n-dedicated-success-checklist` contra `main`
+1. revisar/mergear PR `https://github.com/elevalocalagencia-cloud/Eleva-local-empresa/pull/1`
 2. apos merge, atualizar a VPS com `git pull origin main` em `/root/elevalocal-infra`
 3. seguir para Prompt 2.1 Observability
 4. registrar evidencia de login owner e importacao manual de ao menos 1 workflow no `wf-pilot.elevalocal.shop`

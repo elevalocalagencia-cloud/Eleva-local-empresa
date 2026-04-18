@@ -16,6 +16,8 @@
 - `docs/N8N-DEDICATED-RUNBOOK.md` recebeu a licao aprendida do deploy real
 - commit da correcao foi criado e pushado:
   - `392d660 fase2/0.1 provisioner n8n: fix redis collision + coolify labels`
+- PR aberto:
+  - `https://github.com/elevalocalagencia-cloud/Eleva-local-empresa/pull/1`
 
 ## Validacoes executadas
 
@@ -32,6 +34,6 @@
 - `tenants/manifests/cli-eleva-pilot.yaml` ainda esta em `shared-foundation`; so mudar para `dedicated` em commit separado depois da migracao/importacao real de workflow e cutover combinados
 - login owner e importacao manual de ao menos 1 workflow no dedicated ainda precisam ser registrados como evidencia
 - webhook de smoke ainda retorna `404`, esperado enquanto o workflow de smoke nao for importado
-- PR pode depender de GitHub CLI/token ou abertura manual se o ambiente local nao tiver credencial API disponivel
+- PR aberto e pronto para revisao/merge: `https://github.com/elevalocalagencia-cloud/Eleva-local-empresa/pull/1`
 - Healthchecks semanal para `ops/restic-check.sh` ainda precisa ser configurado/conferido
 - Chatwoot ainda tem backlog P0 de version freeze porque segue em `latest`
