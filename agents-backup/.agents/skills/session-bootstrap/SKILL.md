@@ -9,15 +9,15 @@ Use esta skill no inicio de uma sessao nova para reconstruir o contexto minimo a
 
 ## Objetivo
 
-Retomar o projeto com baixo consumo de tokens, lendo apenas os arquivos persistentes que definem contexto, estado e handoff operacional.
+Retomar o projeto com baixo consumo de tokens, lendo apenas os arquivos canonicos que definem status, veredito e execucao operacional.
 
 ## Sequencia obrigatoria
 
-1. Ler `PROJECT.md` na raiz do workspace
-2. Ler `CONTEXT.md` na raiz do workspace
-3. Ler `STATE.md` na raiz do workspace
-4. Ler `autovenda-pro-b2b-main/docs/HANDOFF.md`
-5. Trocar o foco de trabalho para `autovenda-pro-b2b-main/`
+1. Ler `LAUNCH-READINESS-LEDGER.md` na raiz do workspace
+2. Ler `LAUNCH-AUDIT.md` na raiz do workspace
+3. Ler `LAUNCH-EXECUTION-BOARD.md` na raiz do workspace
+4. Ler `docs/PROMPT-1.3-B-DEPLOY-PILOT.md` se a sessao envolver o pilot n8n dedicado
+5. Confirmar o foco de trabalho em `elevalocal-infra/`
 6. Resumir em poucas linhas:
    - objetivo atual
    - estado atual
@@ -31,7 +31,7 @@ Retomar o projeto com baixo consumo de tokens, lendo apenas os arquivos persiste
 - Nao reler a base inteira sem necessidade
 - Preferir modo economico por padrao
 - Usar subagentes apenas se houver ganho claro dentro da sessao atual
-- Respeitar que o app real fica em `autovenda-pro-b2b-main/`, nao apenas na raiz do workspace
+- Respeitar que a fonte canonica de launch fica na trilogia ledger/audit/board
 
 ## Prompt de uso
 

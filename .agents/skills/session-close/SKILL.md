@@ -9,26 +9,15 @@ Use esta skill no fim de uma sessao para atualizar a memoria persistente do proj
 
 ## Objetivo
 
-Registrar apenas o estado real e atual da sessao nos arquivos de contexto persistente, para que a proxima conta consiga retomar com um bootstrap curto.
+Registrar apenas o estado real e atual da sessao nos arquivos canonicos, para que a proxima conta consiga retomar com um bootstrap curto.
 
 ## Sequencia obrigatoria
 
 1. Revisar rapidamente o que realmente mudou na sessao atual
-2. Atualizar `CONTEXT.md` com:
-   - o que foi feito nesta sessao
-   - validacoes executadas
-   - riscos ainda abertos
-3. Atualizar `STATE.md` com:
-   - fase atual
-   - status
-   - proximo passo concreto
-   - snapshot curto de verificacao
-4. Atualizar `CONTINUAMENTO-DA-SESSAO.md` com:
-   - resumo curto do ponto em que a sessao parou
-   - proximo passo imediato
-   - comandos/arquivos de retomada
-   - riscos ou travas abertas
-5. Atualizar `autovenda-pro-b2b-main/docs/HANDOFF.md` apenas se houve mudanca relevante de fluxo, prioridade, estado do produto ou instrucoes de retomada
+2. Atualizar `LAUNCH-READINESS-LEDGER.md` apenas se houve mudanca real de status, evidencia, owner ou prioridade
+3. Atualizar `LAUNCH-AUDIT.md` apenas se o veredito `GO / NO-GO` mudou
+4. Atualizar `LAUNCH-EXECUTION-BOARD.md` com proximo passo concreto, bloqueios e evidencias novas
+5. Atualizar `docs/PROMPT-1.3-B-DEPLOY-PILOT.md` apenas se o runbook do pilot mudou
 6. Atualizar `PROJECT.md` somente se houve mudanca estrutural real:
    - stack
    - objetivo principal
@@ -48,7 +37,7 @@ Registrar apenas o estado real e atual da sessao nos arquivos de contexto persis
 - Preservar o que ainda e verdade
 - Se `PROJECT.md` nao precisar mudar, nao force mudanca
 - Priorizar continuidade entre contas, nao documentacao perfeita
-- `CONTINUAMENTO-DA-SESSAO.md` deve ser curto, operacional e orientado a retomada
+- `LAUNCH-EXECUTION-BOARD.md` deve permanecer curto, operacional e orientado a retomada
 
 ## Prompt de uso
 

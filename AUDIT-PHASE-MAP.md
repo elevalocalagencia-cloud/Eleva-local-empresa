@@ -88,8 +88,8 @@ mas nao explicita owners distintos por stack. Portanto, a resposta correta hoje 
 - [tenants/registry.yaml](C:/Users/PEDROSO/Downloads/elevalocal-infra/tenants/registry.yaml)
 - [tenants/manifests/cli-eleva-pilot.yaml](C:/Users/PEDROSO/Downloads/elevalocal-infra/tenants/manifests/cli-eleva-pilot.yaml)
 - [tenants/manifests/cli-demo-externo.yaml](C:/Users/PEDROSO/Downloads/elevalocal-infra/tenants/manifests/cli-demo-externo.yaml)
-- [STATE.md](C:/Users/PEDROSO/Downloads/elevalocal-infra/STATE.md)
-- [HANDOFF.md](C:/Users/PEDROSO/Downloads/elevalocal-infra/HANDOFF.md)
+- [LAUNCH-READINESS-LEDGER.md](C:/Users/PEDROSO/Downloads/elevalocal-infra/LAUNCH-READINESS-LEDGER.md)
+- [LAUNCH-EXECUTION-BOARD.md](C:/Users/PEDROSO/Downloads/elevalocal-infra/LAUNCH-EXECUTION-BOARD.md)
 
 ## Matriz de comandos de validacao por stack
 

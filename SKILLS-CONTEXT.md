@@ -20,7 +20,9 @@ Use $session-bootstrap.
 4. [N8N-STATUS.md](C:/Users/PEDROSO/Downloads/elevalocal-infra/N8N-STATUS.md)
 5. [OPERATIONS.md](C:/Users/PEDROSO/Downloads/elevalocal-infra/OPERATIONS.md)
 6. [BACKUP-RESTORE.md](C:/Users/PEDROSO/Downloads/elevalocal-infra/BACKUP-RESTORE.md)
-7. [HANDOFF.md](C:/Users/PEDROSO/Downloads/elevalocal-infra/HANDOFF.md)
+7. [LAUNCH-READINESS-LEDGER.md](C:/Users/PEDROSO/Downloads/elevalocal-infra/LAUNCH-READINESS-LEDGER.md)
+8. [LAUNCH-AUDIT.md](C:/Users/PEDROSO/Downloads/elevalocal-infra/LAUNCH-AUDIT.md)
+9. [LAUNCH-EXECUTION-BOARD.md](C:/Users/PEDROSO/Downloads/elevalocal-infra/LAUNCH-EXECUTION-BOARD.md)
 
 ### Prompt recomendado de retomada
 
@@ -46,7 +48,9 @@ Use $session-close.
 Atualize somente o contexto da infraestrutura elevalocal.
 Nao misture nada no contexto do AutoVenda Pro.
 Se houve mudanca relevante, atualizar:
-- elevalocal-infra/HANDOFF.md
+- elevalocal-infra/LAUNCH-READINESS-LEDGER.md
+- elevalocal-infra/LAUNCH-AUDIT.md
+- elevalocal-infra/LAUNCH-EXECUTION-BOARD.md
 - elevalocal-infra/N8N-STATUS.md
 - elevalocal-infra/OPERATIONS.md
 - elevalocal-infra/BACKUP-RESTORE.md
