@@ -63,6 +63,16 @@ O objetivo tecnico agora nao e apenas "manter os servicos no ar". O objetivo e c
 - [FIRST-EXTERNAL-PROVISIONING.md](C:/Users/PEDROSO/Downloads/elevalocal-infra/FIRST-EXTERNAL-PROVISIONING.md): checklist ponta a ponta para o primeiro provisionamento real de cliente externo
 - [SECURITY-HARDENING.md](C:/Users/PEDROSO/Downloads/elevalocal-infra/SECURITY-HARDENING.md): endurecimento minimo da VPS e reducao de superficie publica
 
+## Material comercial
+
+- [docs/sales/README.md](C:/Users/PEDROSO/Downloads/elevalocal-infra-sales/docs/sales/README.md): indice e fluxo de uso do material comercial versionado
+- [docs/sales/DECK-PILOT.md](C:/Users/PEDROSO/Downloads/elevalocal-infra-sales/docs/sales/DECK-PILOT.md): deck base para discovery, demo e proposta
+- [docs/sales/PROPOSAL-TEMPLATE.md](C:/Users/PEDROSO/Downloads/elevalocal-infra-sales/docs/sales/PROPOSAL-TEMPLATE.md): proposta comercial com placeholders padronizados
+
+## Dominios
+
+- [docs/DOMAIN-STRATEGY.md](C:/Users/PEDROSO/Downloads/elevalocal-infra-sales/docs/DOMAIN-STRATEGY.md): separacao entre dominio publico comercial e camada tecnica operacional
+
 ## Estado atual resumido
 
 - `n8n` operacional em `https://n8m.elevalocal.shop`

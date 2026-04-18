@@ -36,6 +36,7 @@ Este arquivo existe para eliminar conflito entre:
 | Freeze de versao do `Chatwoot` | `OPEN` | risco documentado; stack ainda referenciada em `latest` | `eleva-local-ops` | `P0` | `SIM` |
 | Primeiro provisionamento externo real ponta a ponta | `OPEN` | existe baseline `cli-demo-externo`, mas nao ha go-live real provado | `eleva-local-ops` | `P0` | `SIM` |
 | RPO/RTO por stack | `OPEN` | citado como pendente em auditoria | `eleva-local-ops` | `P1` | `NAO` |
+| Sales enablement | `DONE` | material versionado em `docs/sales/` e estrategia de dominios em `docs/DOMAIN-STRATEGY.md`; landing publica mantida fora do repo em `elevalocal.com.br`; CTAs especificados em `docs/sales/LANDING-CTA-SPEC.md` | `eleva-local-ops` | `P1` | `NAO` |
 | Monitoramento e alertas por tenant | `OPEN` | citado como pendente em auditoria | `eleva-local-ops` | `P1` | `NAO` |
 | Processo recorrente de rotacao por tenant | `OPEN` | politica ainda nao formalizada com evidencia recorrente | `eleva-local-ops` | `P1` | `NAO` |
 | Migracao definitiva do `n8n` | `OPEN` | runbook existe, mas mudanca definitiva nao foi executada | `eleva-local-ops` | `P1` | `NAO` |
