@@ -2,77 +2,58 @@
 
 ## Ponto em que parou
 
-A fundacao multi-cliente ja saiu do plano e entrou em implementacao real no repositorio.
+O P0 de offsite backup foi fechado tecnicamente:
 
-Ja existem:
+- `restic` instalado/atualizado na VPS
+- backup real enviado para Backblaze B2
+- snapshot `e77cf8f6` criado
+- `restic check` sem erros
+- restore controlado validado por comparacao sem diferencas
+- chave B2 exposta foi rotacionada e validada com `restic snapshots`
 
-- schema canonico de tenant manifest
-- validador funcional em `ops/validate-tenant-manifest.py`
-- scaffolder funcional em `ops/create-tenant.py`
-- estrutura real de tenants em `tenants/`
-- tenant piloto interno validado: `cli-eleva-pilot`
-- matriz de provisionamento por tenant definida para `Evolution`, `Chatwoot` e `n8n`
-- guardrail de onboarding aplicado no scaffolder:
-  - cliente externo nasce com `n8n dedicated`
-  - `n8n shared-foundation` ficou restrito a tenant `internal`
-- templates operacionais atualizados para exigir revisao de `provisioning.*`
-- tenant externo de simulacao criado e validado: `cli-demo-externo`
+Tambem foi preparada a prova de `n8n dedicated` para `cli-eleva-pilot`, sem deploy:
+
+- gerador `ops/provision-n8n-dedicated.py`
+- smoke script `ops/smoke-test-tenant.sh`
+- runtime versionado em `tenants/runtime/cli-eleva-pilot/`
+- runbook e plano de migracao
+- checklist de criterio marcado apenas no que foi comprovado
 
 ## Proximo passo imediato
 
-Usar o tenant externo validado como baseline para o primeiro provisionamento real:
-
-1. substituir dados de simulacao por cliente real ou gerar tenant real equivalente
-2. preencher local seguro de segredos e owners operacionais reais
-3. executar provisionamento real de `Evolution`, `Chatwoot` e `n8n dedicated`
-4. registrar smoke tests e restore status apos o go-live controlado
+1. confirmar Healthchecks diario no painel
+2. criar/configurar Healthcheck semanal para `ops/restic-check.sh`
+3. abrir PR da branch `codex/n8n-dedicated-success-checklist` se ainda nao foi aberta
+4. executar deploy controlado do runtime dedicado `cli-eleva-pilot` na VPS
+5. validar dominio `wf-pilot.elevalocal.shop`, login owner, importacao manual de workflow e smoke test
 
 ## Arquivos de retomada
 
+- `CONTINUAMENTO-DA-SESSAO.md`
 - `CONTEXT.md`
 - `STATE.md`
 - `HANDOFF.md`
-- `MULTITENANT-AUDIT.md`
+- `MIGRATION-PILOT.md`
+- `docs/N8N-DEDICATED-RUNBOOK.md`
+- `ops/provision-n8n-dedicated.py`
+- `ops/smoke-test-tenant.sh`
+- `tenants/runtime/cli-eleva-pilot/docker-compose.yml`
+- `tenants/runtime/cli-eleva-pilot/.env.example`
 - `tenants/manifests/cli-eleva-pilot.yaml`
-- `tenants/registry.yaml`
-- `ops/create-tenant.py`
-- `ops/validate-tenant-manifest.py`
-- `tenants/templates/onboarding-checklist.md`
-- `tenants/templates/client-ops-checklist.md`
-- `tenants/templates/secrets-inventory.md`
-- `tenants/manifests/cli-demo-externo.yaml`
-- `tenants/checklists/cli-demo-externo-onboarding.md`
-- `tenants/secrets/cli-demo-externo.md`
 
 ## Verificacao mais recente
 
-- `python -m pytest ops/tests -q` -> `10 passed`
-- `python ops/validate-tenant-manifest.py tenants/manifests/cli-eleva-pilot.yaml --registry tenants/registry.yaml` -> valido
-- `python ops/validate-tenant-manifest.py tenants/manifests/cli-demo-externo.yaml --registry tenants/registry.yaml` -> valido
+- `pytest ops/tests -q` -> `13 passed`
+- `python ops/provision-n8n-dedicated.py --tenant-id cli-eleva-pilot --dry-run` -> ok
+- `docker compose --env-file tenants/runtime/cli-eleva-pilot/.env -f tenants/runtime/cli-eleva-pilot/docker-compose.yml config --quiet` -> ok
+- VPS: `restic snapshots` -> snapshot `e77cf8f6`
+- VPS: `ops/restic-check.sh` -> sem erros
+- VPS: restore `e77cf8f6` + `diff -qr` -> sem diferencas
 
 ## Travas abertas
 
-- runtime dos servicos ainda nao foi isolado por tenant
-- `n8n` continua sendo o maior risco de cross-tenant
-- offsite backup continua nao implementado
-- rotacao de segredos continua pendente
-- ainda falta trocar a simulacao por tenant real e executar provisionamento real
-
-## Regra daqui para frente
-
-Ao fechar sessao depois de ler contexto/memoria, sempre atualizar este arquivo com o estado real e o proximo passo operacional.
-
-## Ordem de leitura na proxima sessao
-
-1. `CONTINUAMENTO-DA-SESSAO.md`
-2. `CONTEXT.md`
-3. `STATE.md`
-4. `HANDOFF.md`
-5. apenas os arquivos listados em `Arquivos de retomada` que forem necessarios para executar o proximo passo
-
-## Regra de economia de contexto
-
-- nao reler o repo inteiro
-- nao abrir arquivos fora da trilha do proximo passo
-- resumir o estado em poucas linhas antes de agir
-- manter o loop: ler -> executar a proxima fatia -> atualizar continuamento/contexto/state
+- Healthchecks precisa de confirmacao visual no painel
+- check semanal de integridade ainda falta
+- PR pode precisar ser aberto manualmente porque `gh` nao esta disponivel neste ambiente
+- deploy real do `n8n` dedicado ainda nao foi feito
+- manifest `cli-eleva-pilot` nao deve ser mudado para `dedicated` antes da migracao real

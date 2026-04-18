@@ -2,7 +2,7 @@
 
 ## Fase atual
 
-Fundacao multi-cliente em execucao.
+Readiness de launch em execucao. Bloqueio P0 de offsite backup foi fechado tecnicamente; proxima frente e provar `n8n dedicated` do tenant piloto antes de qualquer cliente externo.
 
 Readiness de launch:
 
@@ -11,34 +11,29 @@ Readiness de launch:
 
 ## Status
 
-- schema de manifest consolidado
-- scaffold operacional por tenant funcionando
-- tenant piloto interno criado e validado
-- documentacao base de tenant pronta para uso
-- matriz de provisionamento por stack consolidada no manifest e na documentacao
-- guardrail de onboarding no scaffolder impedindo cliente externo em `n8n shared-foundation`
-- templates operacionais alinhados com revisao de `provisioning.*`
-- tenant externo de simulacao `cli-demo-externo` criado, revisado e validado
+- offsite backup real em `restic` ativo na VPS
+- snapshot remoto `e77cf8f6` criado em Backblaze B2
+- integridade validada por `restic check`
+- restore controlado validado sem diferencas
+- chave B2 rotacionada e validada
+- runtime dedicado do `n8n` para `cli-eleva-pilot` preparado em codigo e documentacao
+- deploy/cutover do `n8n` dedicado ainda nao executado
+- `main` contem `125bab1 fase1/n8n-dedicated: prepare pilot runtime`
+- branch `codex/n8n-dedicated-success-checklist` contem `9b23bbc fase1/n8n-dedicated: mark success checklist`
 
 ## Proximo passo concreto
 
-Executar o primeiro provisionamento real de cliente externo:
-
-1. promover `cli-demo-externo` para cliente real equivalente ou criar tenant real
-2. preencher owners e cofres reais de segredos
-3. provisionar `Evolution`, `Chatwoot` e `n8n dedicated`
-4. registrar smoke tests e restore status
-
-Bloqueios P0 ainda abertos antes de `GO CONTROLADO`:
-
-- offsite backup validado
-- rotacao de segredos
-- freeze de versao do `Chatwoot`
-- provisionamento externo real ponta a ponta
+1. confirmar no painel Healthchecks se o check diario recebeu o ping do backup real
+2. criar/configurar check semanal para `ops/restic-check.sh`
+3. abrir PR da branch `codex/n8n-dedicated-success-checklist` se ainda nao estiver aberta
+4. preparar deploy controlado de `tenants/runtime/cli-eleva-pilot` na VPS
+5. validar `curl -I https://wf-pilot.elevalocal.shop`, login owner, importacao manual de ao menos 1 workflow e smoke test
+6. somente depois atualizar `tenants/manifests/cli-eleva-pilot.yaml` para `dedicated` em commit separado
 
 ## Snapshot de verificacao
 
-- testes atuais: `10 passed`
-- exemplo de template: valido
-- tenant piloto `cli-eleva-pilot`: valido no registry real
-- tenant externo `cli-demo-externo`: valido no registry real
+- `restic snapshots` -> snapshot `e77cf8f6` listado
+- `ops/restic-check.sh` -> `no errors were found`
+- restore `e77cf8f6` em `/tmp/r` + `diff -qr` -> sem diferencas
+- `pytest ops/tests -q` -> `13 passed`
+- `docker compose ... config --quiet` do runtime n8n dedicado -> ok
