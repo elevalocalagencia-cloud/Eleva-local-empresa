@@ -14,4 +14,10 @@ tenants/secrets/.vault/*.key
 tenants/runtime/*/.env
 ops/backup-elevalocal.env
 node_modules/
+.next/
+*.tsbuildinfo
+.agents/
+GEMINI.md
+dev-server*.log
+start-server*.log
 .DS_Store
