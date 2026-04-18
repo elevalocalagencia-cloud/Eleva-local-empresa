@@ -90,6 +90,18 @@ Detectamos comportamento fora do esperado. Retornamos ao ambiente anterior sem p
 - o compartilhado continua disponivel como fallback
 - o rollback preserva o ambiente legado
 
+## Critério de sucesso do prompt
+
+- [x] `python ops/provision-n8n-dedicated.py --tenant-id cli-eleva-pilot --dry-run` imprime compose esperado.
+- [ ] Após deploy: `curl -I https://wf-pilot.elevalocal.shop` retorna 200 com certificado válido.
+- [ ] Login owner do pilot funciona no novo domínio.
+- [ ] Pelo menos 1 workflow do shared foi exportado e reimportado no dedicated.
+- [ ] Smoke test passa em 100% dos itens.
+- [ ] Container `n8n-mamtm8g3b2mdh7ko0hxdcyr3` continua no ar.
+- [x] `MIGRATION-PILOT.md` tem seção `executado em {data} por {owner}`.
+
+Observação: os itens dependentes de deploy, login, importação de workflow e smoke real ficam abertos até a execução na VPS. Nesta etapa foi concluída a preparação versionada do runtime dedicated, sem mexer no stack shared do Coolify.
+
 ## Registro operacional
 
 Ao final do piloto, registrar se a operacao:
