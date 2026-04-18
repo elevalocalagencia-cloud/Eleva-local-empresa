@@ -66,6 +66,13 @@ def test_dry_run_prints_dedicated_compose_without_writing(tmp_path: Path) -> Non
     assert "redis:7.4-alpine" in result.stdout
     assert "cli-eleva-pilot-net" in result.stdout
     assert "traefik.http.routers.n8n-eleva-pilot.rule=Host(`wf-pilot.elevalocal.shop`)" in result.stdout
+    assert "traefik.http.routers.n8n-eleva-pilot.entrypoints=https" in result.stdout
+    assert "traefik.http.routers.n8n-eleva-pilot.tls=true" in result.stdout
+    assert "traefik.http.routers.n8n-eleva-pilot.service=n8n-eleva-pilot" in result.stdout
+    assert "traefik.http.routers.n8n-eleva-pilot-http.middlewares=n8n-eleva-pilot-redirect" in result.stdout
+    assert "traefik.http.middlewares.n8n-eleva-pilot-redirect.redirectscheme.scheme=https" in result.stdout
+    assert "QUEUE_BULL_REDIS_HOST: cli-eleva-pilot-redis" in result.stdout
+    assert "  cli-eleva-pilot-redis:" in result.stdout
     assert "mamtm8g3b2mdh7ko0hxdcyr3" not in result.stdout
     assert not (tmp_path / "tenants" / "runtime" / "cli-eleva-pilot").exists()
 
@@ -82,6 +89,11 @@ def test_generates_runtime_compose_and_env_example(tmp_path: Path) -> None:
 
     assert "name: cli-eleva-pilot-n8n" in compose
     assert "n8n-eleva-pilot" in compose
+    assert "  cli-eleva-pilot-redis:" in compose
+    assert "QUEUE_BULL_REDIS_HOST: cli-eleva-pilot-redis" in compose
+    assert "traefik.http.routers.n8n-eleva-pilot.entrypoints=https" in compose
+    assert "traefik.http.routers.n8n-eleva-pilot.tls=true" in compose
+    assert "traefik.http.routers.n8n-eleva-pilot.service=n8n-eleva-pilot" in compose
     assert "cli-eleva-pilot-n8n-data" in compose
     assert "mamtm8g3b2mdh7ko0hxdcyr3" not in compose
     assert "N8N_DOMAIN=wf-pilot.elevalocal.shop" in env_example

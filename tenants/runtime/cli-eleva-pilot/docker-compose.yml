@@ -6,7 +6,7 @@ services:
     restart: unless-stopped
     depends_on:
       - postgresql
-      - redis
+      - cli-eleva-pilot-redis
     environment:
       DB_TYPE: postgresdb
       DB_POSTGRESDB_HOST: postgresql
@@ -23,7 +23,7 @@ services:
       N8N_PROXY_HOPS: "1"
       N8N_SECURE_COOKIE: "true"
       N8N_USER_MANAGEMENT_JWT_SECRET: ${N8N_USER_MANAGEMENT_JWT_SECRET}
-      QUEUE_BULL_REDIS_HOST: redis
+      QUEUE_BULL_REDIS_HOST: cli-eleva-pilot-redis
       QUEUE_BULL_REDIS_PORT: "6379"
       WEBHOOK_URL: https://${N8N_DOMAIN}
     volumes:
@@ -33,8 +33,14 @@ services:
       - traefik
     labels:
       - traefik.enable=true
+      - traefik.http.middlewares.n8n-eleva-pilot-redirect.redirectscheme.scheme=https
+      - traefik.http.routers.n8n-eleva-pilot-http.rule=Host(`wf-pilot.elevalocal.shop`)
+      - traefik.http.routers.n8n-eleva-pilot-http.entrypoints=http
+      - traefik.http.routers.n8n-eleva-pilot-http.middlewares=n8n-eleva-pilot-redirect
       - traefik.http.routers.n8n-eleva-pilot.rule=Host(`wf-pilot.elevalocal.shop`)
-      - traefik.http.routers.n8n-eleva-pilot.entrypoints=websecure
+      - traefik.http.routers.n8n-eleva-pilot.entrypoints=https
+      - traefik.http.routers.n8n-eleva-pilot.service=n8n-eleva-pilot
+      - traefik.http.routers.n8n-eleva-pilot.tls=true
       - traefik.http.routers.n8n-eleva-pilot.tls.certresolver=letsencrypt
       - traefik.http.services.n8n-eleva-pilot.loadbalancer.server.port=5678
 
@@ -43,7 +49,7 @@ services:
     restart: unless-stopped
     depends_on:
       - postgresql
-      - redis
+      - cli-eleva-pilot-redis
     command: worker
     environment:
       DB_TYPE: postgresdb
@@ -55,7 +61,7 @@ services:
       EXECUTIONS_MODE: queue
       N8N_ENCRYPTION_KEY: ${N8N_ENCRYPTION_KEY}
       N8N_USER_MANAGEMENT_JWT_SECRET: ${N8N_USER_MANAGEMENT_JWT_SECRET}
-      QUEUE_BULL_REDIS_HOST: redis
+      QUEUE_BULL_REDIS_HOST: cli-eleva-pilot-redis
       QUEUE_BULL_REDIS_PORT: "6379"
     volumes:
       - n8n-data:/home/node/.n8n
@@ -74,7 +80,7 @@ services:
     networks:
       - internal
 
-  redis:
+  cli-eleva-pilot-redis:
     image: ${REDIS_IMAGE}
     restart: unless-stopped
     command: redis-server --appendonly yes

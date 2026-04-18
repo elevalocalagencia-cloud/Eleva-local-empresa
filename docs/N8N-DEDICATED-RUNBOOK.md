@@ -41,6 +41,22 @@ Provisionar uma nova stack dedicada para `n8n` com:
 - runtime independente do stack compartilhado
 - labels e roteamento separados do ambiente antigo
 
+### Licao aprendida no deploy do `cli-eleva-pilot`
+
+O deploy em producao de `wf-pilot.elevalocal.shop` so estabilizou depois de dois hotfixes manuais no compose gerado. Esses pontos agora sao requisitos do provisioner:
+
+- o service Redis deve ser nomeado por tenant, por exemplo `cli-eleva-pilot-redis`; usar apenas `redis` pode colidir via DNS Docker quando o container `n8n` tambem participa da rede externa `coolify`
+- `QUEUE_BULL_REDIS_HOST` no `n8n` e no `n8n-worker` deve apontar para esse service Redis namespaced
+- labels Traefik precisam seguir o padrao Coolify:
+  - router HTTP separado com `entrypoints=http`
+  - middleware de redirect `redirectscheme.scheme=https`
+  - router HTTPS com `entrypoints=https`
+  - `tls=true` explicito
+  - `router.service=<service>` vinculando router e service
+  - service Traefik dedicado com `loadbalancer.server.port=5678`
+
+Nao voltar para `entrypoints=websecure` neste ambiente.
+
 Para subir na VPS depois de revisar `.env` real:
 
 ```bash
