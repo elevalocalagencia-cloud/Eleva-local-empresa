@@ -1,0 +1,100 @@
+name: cli-eleva-pilot-n8n
+
+services:
+  n8n:
+    image: ${N8N_IMAGE}
+    restart: unless-stopped
+    depends_on:
+      - postgresql
+      - redis
+    environment:
+      DB_TYPE: postgresdb
+      DB_POSTGRESDB_HOST: postgresql
+      DB_POSTGRESDB_PORT: "5432"
+      DB_POSTGRESDB_DATABASE: ${POSTGRES_DB}
+      DB_POSTGRESDB_USER: ${POSTGRES_USER}
+      DB_POSTGRESDB_PASSWORD: ${POSTGRES_PASSWORD}
+      EXECUTIONS_MODE: queue
+      N8N_EDITOR_BASE_URL: https://${N8N_DOMAIN}
+      N8N_ENCRYPTION_KEY: ${N8N_ENCRYPTION_KEY}
+      N8N_HOST: ${N8N_DOMAIN}
+      N8N_PORT: "5678"
+      N8N_PROTOCOL: https
+      N8N_PROXY_HOPS: "1"
+      N8N_SECURE_COOKIE: "true"
+      N8N_USER_MANAGEMENT_JWT_SECRET: ${N8N_USER_MANAGEMENT_JWT_SECRET}
+      QUEUE_BULL_REDIS_HOST: redis
+      QUEUE_BULL_REDIS_PORT: "6379"
+      WEBHOOK_URL: https://${N8N_DOMAIN}
+    volumes:
+      - n8n-data:/home/node/.n8n
+    networks:
+      - internal
+      - traefik
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.n8n-eleva-pilot.rule=Host(`wf-pilot.elevalocal.shop`)
+      - traefik.http.routers.n8n-eleva-pilot.entrypoints=websecure
+      - traefik.http.routers.n8n-eleva-pilot.tls.certresolver=letsencrypt
+      - traefik.http.services.n8n-eleva-pilot.loadbalancer.server.port=5678
+
+  n8n-worker:
+    image: ${N8N_IMAGE}
+    restart: unless-stopped
+    depends_on:
+      - postgresql
+      - redis
+    command: worker
+    environment:
+      DB_TYPE: postgresdb
+      DB_POSTGRESDB_HOST: postgresql
+      DB_POSTGRESDB_PORT: "5432"
+      DB_POSTGRESDB_DATABASE: ${POSTGRES_DB}
+      DB_POSTGRESDB_USER: ${POSTGRES_USER}
+      DB_POSTGRESDB_PASSWORD: ${POSTGRES_PASSWORD}
+      EXECUTIONS_MODE: queue
+      N8N_ENCRYPTION_KEY: ${N8N_ENCRYPTION_KEY}
+      N8N_USER_MANAGEMENT_JWT_SECRET: ${N8N_USER_MANAGEMENT_JWT_SECRET}
+      QUEUE_BULL_REDIS_HOST: redis
+      QUEUE_BULL_REDIS_PORT: "6379"
+    volumes:
+      - n8n-data:/home/node/.n8n
+    networks:
+      - internal
+
+  postgresql:
+    image: ${POSTGRES_IMAGE}
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgresql-data:/var/lib/postgresql/data
+    networks:
+      - internal
+
+  redis:
+    image: ${REDIS_IMAGE}
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    volumes:
+      - redis-data:/data
+    networks:
+      - internal
+
+volumes:
+  n8n-data:
+    name: cli-eleva-pilot-n8n-data
+  postgresql-data:
+    name: cli-eleva-pilot-postgresql-data
+  redis-data:
+    name: cli-eleva-pilot-redis-data
+
+networks:
+  internal:
+    name: cli-eleva-pilot-net
+    driver: bridge
+  traefik:
+    external: true
+    name: coolify
