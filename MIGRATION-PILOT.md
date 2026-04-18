@@ -1,6 +1,6 @@
 # Migration Pilot
 
-## executado em {data} por {owner}
+## executado em 2026-04-18 por Eleva Local Ops
 
 ## Objetivo
 
@@ -57,15 +57,34 @@ ops/smoke-test-tenant.sh --tenant-id cli-eleva-pilot --domain wf-pilot.elevaloca
 
 ## Evidencias
 
-- URL do ambiente dedicado:
-- owner responsavel:
+- URL do ambiente dedicado: `https://wf-pilot.elevalocal.shop`
+- owner responsavel: criado no `n8n` dedicado e registrado no cofre do tenant
 - workflows exportados:
 - workflows importados:
-- credenciais recriadas:
-- smoke test executado:
+- credenciais recriadas: nao aplicavel nesta etapa; owner e segredos operacionais registrados no cofre
+- smoke test executado: parcial, com health interno e roteamento HTTP/HTTPS validados
 - shared ainda no ar (`n8n-mamtm8g3b2mdh7ko0hxdcyr3`):
 - resultado do corte:
 - resultado do fallback:
+
+### Evidencia de execucao — Prompt 1.3-B
+
+```text
+tenant: cli-eleva-pilot
+slug: eleva-pilot
+domain: wf-pilot.elevalocal.shop
+data: 2026-04-18T10:53:41-03:00
+containers:
+cli-eleva-pilot-n8n-n8n-1 Up 40 minutes
+cli-eleva-pilot-n8n-n8n-worker-1 Up 40 minutes
+cli-eleva-pilot-n8n-postgresql-1 Up 40 minutes
+cli-eleva-pilot-n8n-cli-eleva-pilot-redis-1 Up 40 minutes
+healthz: {"status":"ok"}
+https_code: 200
+http_code: 302
+http_redirect: https://wf-pilot.elevalocal.shop/
+owner: criado e registrado no cofre do tenant
+```
 
 ## Comunicacao ao cliente
 
