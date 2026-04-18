@@ -1,5 +1,17 @@
 # Backup Restore
 
+## RPO / RTO
+
+Targets internos por stack:
+
+- [docs/RPO-RTO.md](C:/Users/PEDROSO/Downloads/elevalocal-infra/docs/RPO-RTO.md)
+
+## Drill rotation
+
+Cadencia trimestral e regra de evidencias:
+
+- [docs/RESTORE-DRILL-PLAYBOOK.md](C:/Users/PEDROSO/Downloads/elevalocal-infra/docs/RESTORE-DRILL-PLAYBOOK.md)
+
 ## Backup atual conhecido
 
 ### n8n
