@@ -1,0 +1,120 @@
+tenant:
+  tenant_id: cli-eleva-pilot
+  status: internal
+  company_name: Eleva Local Pilot
+  slug: eleva-pilot
+  owner:
+    name: Eleva Ops
+    role: Operacoes
+    email: ops@elevalocal.shop
+    phone: '+5511999999999'
+  contract:
+    plan: interno
+    billing_cycle: mensal
+    start_date: null
+    notes: >-
+      Tenant interno de homologacao usado para validar o fluxo operacional
+      multi-cliente antes de provisionar clientes externos.
+naming:
+  evolution_instance: cli-eleva-pilot-evo
+  chatwoot_inbox: cli-eleva-pilot-inbox
+  chatwoot_labels_prefix: cli-eleva-pilot
+  n8n_prefix: cli-eleva-pilot-wf
+  secrets_prefix: cli-eleva-pilot-secret
+  backups_prefix: cli-eleva-pilot
+channels:
+  whatsapp:
+    number_e164: '+5511999999999'
+    display_name: Eleva Local Pilot
+    evolution_instance: cli-eleva-pilot-evo
+    status: planned
+  chatwoot:
+    account_name: Eleva Local
+    inbox_name: cli-eleva-pilot-inbox
+    inbox_id: null
+    status: planned
+automation:
+  n8n:
+    mode: shared-foundation
+    workflows:
+    - name: cli-eleva-pilot-wf-onboarding
+      purpose: fluxo inicial de triagem
+      status: planned
+  ai:
+    agent_namespace: cli-eleva-pilot
+    prompt_set: cli-eleva-pilot-default
+    memory_scope: isolated
+    notes: Nao compartilhar prompt, memoria ou credencial com outros tenants.
+provisioning:
+  evolution:
+    runtime_mode: shared-foundation
+    tenant_scope: instance-per-tenant
+    resource_name: cli-eleva-pilot-evo
+    naming_pattern: cli-{slug}-evo
+    credential_owner: eleva-local-ops
+    credential_scope: tenant-exclusive
+    rollout_checklist:
+    - criar instancia Evolution nomeada pelo tenant_id
+    - vincular numero WhatsApp exclusivo do tenant
+    - registrar credenciais no inventario do tenant
+    - validar webhook e teste de envio/recebimento
+  chatwoot:
+    runtime_mode: shared-foundation
+    tenant_scope: inbox-per-tenant
+    resource_name: cli-eleva-pilot-inbox
+    naming_pattern: cli-{slug}-inbox
+    credential_owner: eleva-local-ops
+    credential_scope: tenant-exclusive
+    rollout_checklist:
+    - criar inbox dedicada no Chatwoot
+    - aplicar labels e automacoes com prefixo do tenant
+    - registrar token e owner operacional no inventario do tenant
+    - validar roteamento e recebimento na inbox correta
+  n8n:
+    runtime_mode: shared-foundation
+    tenant_scope: namespace-within-shared-stack
+    resource_name: cli-eleva-pilot-wf
+    naming_pattern: cli-{slug}-wf-{dominio}
+    credential_owner: eleva-local-ops
+    credential_scope: tenant-exclusive
+    rollout_checklist:
+    - manter prefixo obrigatorio em workflows e credenciais do tenant
+    - registrar stack compartilhada e blast radius no inventario operacional
+    - validar namespace isolado antes de publicar qualquer workflow
+    - bloquear onboarding externo ate migracao para runtime dedicada
+infrastructure:
+  domains:
+    customer_facing: null
+    internal_webhook: webhook.elevalocal.shop
+  integrations:
+    evolution_api: api.elevalocal.shop
+    chatwoot: chat.elevalocal.shop
+    n8n: n8m.elevalocal.shop
+  backup:
+    included: true
+    restore_drill_required: true
+    last_restore_drill: null
+operations:
+  onboarding_checklist: tenants/checklists/cli-eleva-pilot-onboarding.md
+  ops_checklist: tenants/checklists/cli-eleva-pilot-ops.md
+  secrets_inventory: tenants/secrets/cli-eleva-pilot.md
+  last_reviewed_at: null
+  reviewed_by: null
+  inventory_refs:
+  - INVENTORY.md
+  - N8N-STATUS.md
+  - CHATWOOT-STATUS.md
+  - EVOLUTION-STATUS.md
+  stack_mapping:
+    n8n_shared_stack: n8n-mamtm8g3b2mdh7ko0hxdcyr3
+    chatwoot_shared_stack: chatwoot-c8ecfzoz3ddr69y9c4bto96s
+    evolution_shared_stack: api-rh7m1i3wfmf9254fhcb4pn5p
+    chatwoot_sidekiq: sidekiq-c8ecfzoz3ddr69y9c4bto96s
+    evolution_database: postgres-rh7m1i3wfmf9254fhcb4pn5p
+    n8n_database: postgresql-mamtm8g3b2mdh7ko0hxdcyr3
+security:
+  secrets_segregated: true
+  shared_credentials_allowed: false
+  lgpd_notes: >-
+    Tenant interno sem dados de cliente final. Usar apenas para validar
+    naming, manifests, automacoes e checklist de segregacao.

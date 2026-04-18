@@ -1,0 +1,4 @@
+# Local encrypted vault keys. Keep encrypted inventories tracked if ever added,
+# but never commit private age keys.
+tenants/secrets/.vault/*.key
+!tenants/secrets/.vault/*.enc

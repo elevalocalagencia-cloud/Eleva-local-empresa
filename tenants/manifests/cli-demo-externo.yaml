@@ -1,0 +1,108 @@
+tenant:
+  tenant_id: cli-demo-externo
+  status: onboarding
+  company_name: Cliente Externo Demo LTDA
+  slug: demo-externo
+  owner:
+    name: Operacoes Demo
+    role: Operacoes
+    email: ops-demo@elevalocal.shop
+    phone: '+5511976543210'
+  contract:
+    plan: piloto-externo
+    billing_cycle: mensal
+    start_date: null
+    notes: >-
+      Tenant de simulacao para validar o onboarding externo com `n8n dedicated`
+      antes de provisionar cliente real.
+naming:
+  evolution_instance: cli-demo-externo-evo
+  chatwoot_inbox: cli-demo-externo-inbox
+  chatwoot_labels_prefix: cli-demo-externo
+  n8n_prefix: cli-demo-externo-wf
+  secrets_prefix: cli-demo-externo-secret
+  backups_prefix: cli-demo-externo
+channels:
+  whatsapp:
+    number_e164: '+5511976543210'
+    display_name: Cliente Externo Demo LTDA
+    evolution_instance: cli-demo-externo-evo
+    status: pending
+  chatwoot:
+    account_name: Eleva Local
+    inbox_name: cli-demo-externo-inbox
+    inbox_id: null
+    status: pending
+automation:
+  n8n:
+    mode: dedicated
+    workflows:
+    - name: cli-demo-externo-wf-onboarding
+      purpose: fluxo inicial de triagem
+      status: planned
+  ai:
+    agent_namespace: cli-demo-externo
+    prompt_set: cli-demo-externo-default
+    memory_scope: isolated
+    notes: Nao compartilhar prompt, memoria ou credencial com outros tenants.
+provisioning:
+  evolution:
+    runtime_mode: shared-foundation
+    tenant_scope: instance-per-tenant
+    resource_name: cli-demo-externo-evo
+    naming_pattern: cli-{slug}-evo
+    credential_owner: eleva-local-ops
+    credential_scope: tenant-exclusive
+    rollout_checklist:
+    - criar instancia Evolution nomeada pelo tenant_id
+    - vincular numero WhatsApp exclusivo do tenant
+    - registrar credenciais no inventario do tenant
+    - validar webhook e teste de envio/recebimento
+  chatwoot:
+    runtime_mode: shared-foundation
+    tenant_scope: inbox-per-tenant
+    resource_name: cli-demo-externo-inbox
+    naming_pattern: cli-{slug}-inbox
+    credential_owner: eleva-local-ops
+    credential_scope: tenant-exclusive
+    rollout_checklist:
+    - criar inbox dedicada no Chatwoot
+    - aplicar labels e automacoes com prefixo do tenant
+    - registrar token e owner operacional no inventario do tenant
+    - validar roteamento e recebimento na inbox correta
+  n8n:
+    runtime_mode: dedicated
+    tenant_scope: workspace-per-tenant
+    resource_name: cli-demo-externo-wf
+    naming_pattern: cli-{slug}-wf-{dominio}
+    credential_owner: eleva-local-ops
+    credential_scope: tenant-exclusive
+    rollout_checklist:
+    - provisionar workspace ou stack dedicada de n8n para o tenant
+    - criar credenciais exclusivas com prefixo do tenant
+    - publicar workflows apenas dentro do namespace do tenant
+    - executar smoke test e registrar rollback path no checklist
+infrastructure:
+  domains:
+    customer_facing: demo-externo.elevalocal.shop
+    internal_webhook: webhook.elevalocal.shop
+  integrations:
+    evolution_api: api.elevalocal.shop
+    chatwoot: chat.elevalocal.shop
+    n8n: n8m.elevalocal.shop
+  backup:
+    included: true
+    restore_drill_required: true
+    last_restore_drill: null
+operations:
+  onboarding_checklist: tenants/checklists/cli-demo-externo-onboarding.md
+  ops_checklist: tenants/checklists/cli-demo-externo-ops.md
+  secrets_inventory: tenants/secrets/cli-demo-externo.md
+  last_reviewed_at: '2026-04-17'
+  reviewed_by: Codex
+security:
+  secrets_segregated: true
+  shared_credentials_allowed: false
+  lgpd_notes: >-
+    Tenant de simulacao sem dados de cliente final. Usar apenas para validar
+    onboarding, naming, checklist e gates de provisionamento externo.

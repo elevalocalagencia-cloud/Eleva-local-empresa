@@ -1,0 +1,43 @@
+# Registro central de tenants.
+# Use este arquivo como modelo para manter uma visao unica do portfolio.
+
+registry:
+  version: 1
+  owner_team: eleva-local-ops
+  last_reviewed_at: "2026-04-17"
+  notes: >
+    Nao usar este registro para guardar segredos. O objetivo e manter
+    rastreabilidade operacional, status por cliente e referencias cruzadas.
+
+tenants:
+  - tenant_id: cli-demo-registry
+    slug: demo-registry
+    company_name: Cliente Demo Registry LTDA
+    status: active
+    tier: piloto
+    owner: ops@demoregistry.com
+    manifest_path: tenants/manifests/cli-demo-registry.yaml
+    secrets_inventory_path: tenants/secrets/cli-demo-registry.md
+    onboarding_status: completed
+    operations_status: active
+    backup_status: protected
+    restore_status: validated
+    channels:
+      whatsapp_number: "+5500000000001"
+      evolution_instance: cli-demo-registry-evo
+      chatwoot_inbox: cli-demo-registry-inbox
+    automation:
+      n8n_prefix: cli-demo-registry-wf
+      agent_namespace: cli-demo-registry
+    notes: >
+      Cliente exemplo para demonstrar a estrutura do registro.
+
+checks:
+  required_per_tenant:
+    - tenant_id unico
+    - manifesto operacional
+    - inventario de segredos
+    - inbox segregada
+    - instancia Evolution segregada
+    - namespace de workflow
+    - restore drill registrado

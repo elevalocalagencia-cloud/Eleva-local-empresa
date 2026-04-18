@@ -1,0 +1,69 @@
+registry:
+  version: 1
+  owner_team: eleva-local-ops
+  last_reviewed_at: '2026-04-17'
+  notes: 'Registro operacional real dos tenants provisionados. Nao guardar segredos
+    aqui.
+
+    '
+tenants:
+- tenant_id: cli-eleva-pilot
+  slug: eleva-pilot
+  company_name: Eleva Local Pilot
+  status: internal
+  tier: interno
+  owner: ops@elevalocal.shop
+  manifest_path: tenants/manifests/cli-eleva-pilot.yaml
+  secrets_inventory_path: tenants/secrets/cli-eleva-pilot.md
+  onboarding_status: pending
+  operations_status: active
+  backup_status: protected
+  restore_status: validated
+  channels:
+    whatsapp_number: '+5511999999999'
+    evolution_instance: cli-eleva-pilot-evo
+    chatwoot_inbox: cli-eleva-pilot-inbox
+  automation:
+    n8n_prefix: cli-eleva-pilot-wf
+    agent_namespace: cli-eleva-pilot
+  provisioning:
+    evolution_runtime_mode: shared-foundation
+    chatwoot_runtime_mode: shared-foundation
+    n8n_runtime_mode: shared-foundation
+  notes: Tenant interno de homologacao criado via ops/create-tenant.py e mapeado para
+    a stack compartilhada atual.
+- tenant_id: cli-demo-externo
+  slug: demo-externo
+  company_name: Cliente Externo Demo LTDA
+  status: onboarding
+  tier: piloto-externo
+  owner: ops-demo@elevalocal.shop
+  manifest_path: tenants/manifests/cli-demo-externo.yaml
+  secrets_inventory_path: tenants/secrets/cli-demo-externo.md
+  onboarding_status: pending
+  operations_status: pending
+  backup_status: protected
+  restore_status: pending
+  channels:
+    whatsapp_number: '+5511976543210'
+    evolution_instance: cli-demo-externo-evo
+    chatwoot_inbox: cli-demo-externo-inbox
+  automation:
+    n8n_prefix: cli-demo-externo-wf
+    agent_namespace: cli-demo-externo
+  provisioning:
+    evolution_runtime_mode: shared-foundation
+    chatwoot_runtime_mode: shared-foundation
+    n8n_runtime_mode: dedicated
+  notes: >-
+    Tenant externo de simulacao criado via ops/create-tenant.py para validar o
+    onboarding com `n8n dedicated` antes de provisionamento real.
+checks:
+  required_per_tenant:
+  - tenant_id unico
+  - manifesto operacional
+  - inventario de segredos
+  - inbox segregada
+  - instancia Evolution segregada
+  - namespace de workflow
+  - restore drill registrado

@@ -1,0 +1,121 @@
+# Exemplo de manifesto operacional de tenant.
+# Duplicar este arquivo para cada cliente usando um nome estavel.
+
+tenant:
+  tenant_id: cli-exemplo
+  status: onboarding
+  company_name: Cliente Exemplo LTDA
+  slug: cliente-exemplo
+  owner:
+    name: Nome do responsavel
+    role: Operacoes
+    email: responsavel@cliente.com
+    phone: "+5500000000000"
+  contract:
+    plan: piloto
+    billing_cycle: mensal
+    start_date: "2026-04-17"
+    notes: >
+      Escopo inicial do cliente, restricoes contratuais e observacoes
+      relevantes para operacao.
+
+naming:
+  evolution_instance: cli-exemplo-evo
+  chatwoot_inbox: cli-exemplo-inbox
+  chatwoot_labels_prefix: cli-exemplo
+  n8n_prefix: cli-exemplo-wf
+  secrets_prefix: cli-exemplo-secret
+  backups_prefix: cli-exemplo
+
+channels:
+  whatsapp:
+    number_e164: "+5500000000000"
+    display_name: Cliente Exemplo
+    evolution_instance: cli-exemplo-evo
+    status: pending
+  chatwoot:
+    account_name: Eleva Local
+    inbox_name: cli-exemplo-inbox
+    inbox_id: null
+    status: pending
+
+automation:
+  n8n:
+    mode: dedicated
+    workflows:
+      - name: cli-exemplo-wf-onboarding
+        purpose: fluxo inicial de triagem
+        status: planned
+      - name: cli-exemplo-wf-followup
+        purpose: automacao de follow-up
+        status: planned
+  ai:
+    agent_namespace: cli-exemplo
+    prompt_set: cli-exemplo-default
+    memory_scope: isolated
+    notes: >
+      Nao compartilhar prompt, memoria ou credencial com outros tenants.
+
+provisioning:
+  evolution:
+    runtime_mode: shared-foundation
+    tenant_scope: instance-per-tenant
+    resource_name: cli-exemplo-evo
+    naming_pattern: cli-{slug}-evo
+    credential_owner: eleva-local-ops
+    credential_scope: tenant-exclusive
+    rollout_checklist:
+      - criar instancia Evolution nomeada pelo tenant_id
+      - vincular numero WhatsApp exclusivo do tenant
+      - registrar credenciais no inventario do tenant
+      - validar webhook e teste de envio/recebimento
+  chatwoot:
+    runtime_mode: shared-foundation
+    tenant_scope: inbox-per-tenant
+    resource_name: cli-exemplo-inbox
+    naming_pattern: cli-{slug}-inbox
+    credential_owner: eleva-local-ops
+    credential_scope: tenant-exclusive
+    rollout_checklist:
+      - criar inbox dedicada no Chatwoot
+      - aplicar labels e automacoes com prefixo do tenant
+      - registrar token e owner operacional no inventario do tenant
+      - validar roteamento e recebimento na inbox correta
+  n8n:
+    runtime_mode: dedicated
+    tenant_scope: workspace-per-tenant
+    resource_name: cli-exemplo-wf
+    naming_pattern: cli-{slug}-wf-{nome}
+    credential_owner: eleva-local-ops
+    credential_scope: tenant-exclusive
+    rollout_checklist:
+      - provisionar workspace ou stack dedicada de n8n para o tenant
+      - criar credenciais exclusivas com prefixo do tenant
+      - publicar workflows apenas dentro do namespace do tenant
+      - executar smoke test e registrar rollback path no checklist
+
+infrastructure:
+  domains:
+    customer_facing: null
+    internal_webhook: null
+  integrations:
+    evolution_api: api.elevalocal.shop
+    chatwoot: chat.elevalocal.shop
+    n8n: n8m.elevalocal.shop
+  backup:
+    included: true
+    restore_drill_required: true
+    last_restore_drill: null
+
+operations:
+  onboarding_checklist: tenants/templates/onboarding-checklist.md
+  ops_checklist: tenants/templates/client-ops-checklist.md
+  secrets_inventory: tenants/templates/secrets-inventory.md
+  last_reviewed_at: null
+  reviewed_by: null
+
+security:
+  secrets_segregated: true
+  shared_credentials_allowed: false
+  lgpd_notes: >
+    Registrar aqui qualquer requisito especifico de dados, retencao e acesso.

@@ -1,0 +1,100 @@
+services:
+  n8n:
+    image: ${N8N_IMAGE}
+    restart: unless-stopped
+    depends_on:
+      - postgresql
+      - redis
+    environment:
+      DB_TYPE: postgresdb
+      DB_POSTGRESDB_HOST: ${DB_POSTGRESDB_HOST}
+      DB_POSTGRESDB_PORT: ${DB_POSTGRESDB_PORT}
+      DB_POSTGRESDB_DATABASE: ${DB_POSTGRESDB_DATABASE}
+      DB_POSTGRESDB_USER: ${DB_POSTGRESDB_USER}
+      DB_POSTGRESDB_PASSWORD: ${DB_POSTGRESDB_PASSWORD}
+      EXECUTIONS_MODE: queue
+      N8N_EDITOR_BASE_URL: ${N8N_EDITOR_BASE_URL}
+      N8N_ENCRYPTION_KEY: ${N8N_ENCRYPTION_KEY}
+      N8N_HOST: ${N8N_HOST}
+      N8N_PORT: ${N8N_PORT}
+      N8N_PROTOCOL: ${N8N_PROTOCOL}
+      N8N_PROXY_HOPS: ${N8N_PROXY_HOPS}
+      N8N_SECURE_COOKIE: ${N8N_SECURE_COOKIE}
+      N8N_USER_MANAGEMENT_JWT_SECRET: ${N8N_USER_MANAGEMENT_JWT_SECRET}
+      QUEUE_BULL_REDIS_HOST: ${QUEUE_BULL_REDIS_HOST}
+      QUEUE_BULL_REDIS_PORT: ${QUEUE_BULL_REDIS_PORT}
+      WEBHOOK_URL: ${WEBHOOK_URL}
+    volumes:
+      - n8n-data:/home/node/.n8n
+    networks:
+      - internal
+      - traefik
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.n8n.rule: Host(`${N8N_DOMAIN}`)
+      traefik.http.routers.n8n.entrypoints: websecure
+      traefik.http.routers.n8n.tls.certresolver: letsencrypt
+      traefik.http.services.n8n.loadbalancer.server.port: "${N8N_PORT}"
+
+  n8n-worker:
+    image: ${N8N_IMAGE}
+    restart: unless-stopped
+    depends_on:
+      - postgresql
+      - redis
+    command: worker
+    environment:
+      DB_TYPE: postgresdb
+      DB_POSTGRESDB_HOST: ${DB_POSTGRESDB_HOST}
+      DB_POSTGRESDB_PORT: ${DB_POSTGRESDB_PORT}
+      DB_POSTGRESDB_DATABASE: ${DB_POSTGRESDB_DATABASE}
+      DB_POSTGRESDB_USER: ${DB_POSTGRESDB_USER}
+      DB_POSTGRESDB_PASSWORD: ${DB_POSTGRESDB_PASSWORD}
+      EXECUTIONS_MODE: queue
+      N8N_ENCRYPTION_KEY: ${N8N_ENCRYPTION_KEY}
+      N8N_USER_MANAGEMENT_JWT_SECRET: ${N8N_USER_MANAGEMENT_JWT_SECRET}
+      QUEUE_BULL_REDIS_HOST: ${QUEUE_BULL_REDIS_HOST}
+      QUEUE_BULL_REDIS_PORT: ${QUEUE_BULL_REDIS_PORT}
+    volumes:
+      - n8n-data:/home/node/.n8n
+    networks:
+      - internal
+
+  postgresql:
+    image: ${POSTGRES_IMAGE}
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgresql-data:/var/lib/postgresql/data
+    networks:
+      - internal
+
+  redis:
+    image: ${REDIS_IMAGE}
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    volumes:
+      - redis-data:/data
+    networks:
+      - internal
+
+volumes:
+  n8n-data:
+    external: true
+    name: mamtm8g3b2mdh7ko0hxdcyr3_n8n-data
+  postgresql-data:
+    external: true
+    name: mamtm8g3b2mdh7ko0hxdcyr3_postgresql-data
+  redis-data:
+    external: true
+    name: mamtm8g3b2mdh7ko0hxdcyr3_redis-data
+
+networks:
+  internal:
+    driver: bridge
+  traefik:
+    external: true
+    name: ${TRAEFIK_NETWORK}
