@@ -55,6 +55,11 @@ Fluxo esperado do backup diario:
 4. aplicar `restic forget --keep-daily 7 --keep-weekly 4 --keep-monthly 12`
 5. enviar webhook de sucesso ou falha
 
+## Validacao estatica
+
+- os testes automatizados do workflow de backup ficam em [ops/tests/test_backup_script.py](/C:/Users/PEDROSO/Downloads/elevalocal-infra/ops/tests/test_backup_script.py)
+- antes de alterar o script, rodar `pytest ops/tests -q` e validar sintaxe com `bash -n`
+
 ## Restore seletivo
 
 ### Por snapshot

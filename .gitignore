@@ -1,4 +1,17 @@
 # Local encrypted vault keys. Keep encrypted inventories tracked if ever added,
 # but never commit private age keys.
+*.env
+!*.env.example
+!backup-elevalocal.env.example
+*.key
+*.sql
+*.tar.gz
+*.tgz
+__pycache__/
+.pytest_cache/
 tenants/secrets/.vault/*.key
 !tenants/secrets/.vault/*.enc
+tenants/runtime/*/.env
+ops/backup-elevalocal.env
+node_modules/
+.DS_Store

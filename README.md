@@ -48,6 +48,7 @@ O objetivo tecnico agora nao e apenas "manter os servicos no ar". O objetivo e c
 - [LAUNCH-AUDIT.md](C:/Users/PEDROSO/Downloads/elevalocal-infra/LAUNCH-AUDIT.md): decisao executiva de `GO / NO-GO` para lancamento, bloqueios atuais e gates minimos de liberacao
 - [LAUNCH-READINESS-LEDGER.md](C:/Users/PEDROSO/Downloads/elevalocal-infra/LAUNCH-READINESS-LEDGER.md): fonte canonica de status, prioridade e impacto de readiness para lancamento
 - [LAUNCH-EXECUTION-BOARD.md](C:/Users/PEDROSO/Downloads/elevalocal-infra/LAUNCH-EXECUTION-BOARD.md): painel unico para executar as frentes P0 do lancamento em ordem global
+- [VPS-EXECUTION-CHECKLIST.md](C:/Users/PEDROSO/Downloads/elevalocal-infra/VPS-EXECUTION-CHECKLIST.md): checklist operacional para executar comandos na VPS com seguranca e evidencia
 - [INVENTORY.md](C:/Users/PEDROSO/Downloads/elevalocal-infra/INVENTORY.md): inventario da VPS, servicos, dominios e volumes
 - [N8N-STATUS.md](C:/Users/PEDROSO/Downloads/elevalocal-infra/N8N-STATUS.md): estado atual do `n8n`, incidente de auth e restricao atual de Redis 7
 - [N8N-MIGRATION.md](C:/Users/PEDROSO/Downloads/elevalocal-infra/N8N-MIGRATION.md): runbook para migracao definitiva do `n8n`
