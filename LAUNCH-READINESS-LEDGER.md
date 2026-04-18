@@ -24,6 +24,8 @@ Este arquivo existe para eliminar conflito entre:
 - `PARTIAL`: trilha existe, mas evidencia de fechamento ainda nao existe
 - `READY-PENDING-CLIENT`: tecnica pronta, aguardando cliente real
 - `DONE-TECNICO`: base tecnica pronta; execucao comercial depende de insumo externo
+- `DONE-TARGETS`: targets internos definidos e publicados
+- `DONE-PLAYBOOK`: cadencia e regra operacional formalizadas
 
 ## Ledger canonico
 
@@ -38,7 +40,8 @@ Este arquivo existe para eliminar conflito entre:
 | Freeze de versao do `Chatwoot` | `DONE` | `CHATWOOT-VERSION-FREEZE.md` registra freeze em `2026-04-18` para `chatwoot/chatwoot:v4.12.0` com backup local pre-freeze e rollback documentado | `eleva-local-ops` | `P0` | `SIM` |
 | Primeiro provisionamento externo real ponta a ponta | `READY-PENDING-CLIENT` | scaffold, checklist, portal sem hardcode do piloto, estrutura `tenants/evidence/` e `legal/signed/` prontas; aguardando cliente real para executar `2.5-B` | `eleva-local-ops` | `P0` | `SIM` |
 | GO CONTROLADO tecnico | `DONE-TECNICO` | base tecnica shelf-ready para os proximos clientes; execucao comercial ainda depende do primeiro cliente real em `2.5-B` | `eleva-local-ops` | `P0` | `NAO` |
-| RPO/RTO por stack | `OPEN` | citado como pendente em auditoria | `eleva-local-ops` | `P1` | `NAO` |
+| RPO/RTO por stack | `DONE-TARGETS` | `2026-04-18`: targets internos definidos em [docs/RPO-RTO.md](C:/Users/PEDROSO/Downloads/elevalocal-infra/docs/RPO-RTO.md); validacao pratica segue por drill trimestral | `eleva-local-ops` | `P1` | `NAO` |
+| Rotina trimestral de restore drill | `DONE-PLAYBOOK` | `2026-04-18`: cadencia formalizada em [docs/RESTORE-DRILL-PLAYBOOK.md](C:/Users/PEDROSO/Downloads/elevalocal-infra/docs/RESTORE-DRILL-PLAYBOOK.md); primeiro registro em [tenants/evidence/_drills/2026-Q2-n8n-dedicated.md](C:/Users/PEDROSO/Downloads/elevalocal-infra/tenants/evidence/_drills/2026-Q2-n8n-dedicated.md) | `eleva-local-ops` | `P1` | `NAO` |
 | Monitoramento e alertas por tenant | `OPEN` | citado como pendente em auditoria | `eleva-local-ops` | `P1` | `NAO` |
 | Processo recorrente de rotacao por tenant | `OPEN` | politica ainda nao formalizada com evidencia recorrente | `eleva-local-ops` | `P1` | `NAO` |
 | Migracao definitiva do `n8n` | `OPEN` | runbook existe, mas mudanca definitiva nao foi executada | `eleva-local-ops` | `P1` | `NAO` |
